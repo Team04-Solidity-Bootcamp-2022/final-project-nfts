@@ -92,7 +92,7 @@ const HeroSection = () => {
                 filterUnits="userSpaceOnUse"
                 color-interpolation-filters="sRGB"
               >
-                <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                <feFlood floodOpacity="0" result="BackgroundImageFix" />
                 <feBlend
                   mode="normal"
                   in="SourceGraphic"
@@ -113,7 +113,7 @@ const HeroSection = () => {
                 filterUnits="userSpaceOnUse"
                 color-interpolation-filters="sRGB"
               >
-                <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                <feFlood floodOpacity="0" result="BackgroundImageFix" />
                 <feBlend
                   mode="normal"
                   in="SourceGraphic"
@@ -152,9 +152,9 @@ const HeroSection = () => {
                 y2="99.1224"
                 gradientUnits="userSpaceOnUse"
               >
-                <stop stop-color="#EBC77A" />
-                <stop offset="0.541667" stop-color="#CA3F8D" />
-                <stop offset="1" stop-color="#5142FC" />
+                <stop stopColor="#EBC77A" />
+                <stop offset="0.541667" stopColor="#CA3F8D" />
+                <stop offset="1" stopColor="#5142FC" />
               </linearGradient>
               <radialGradient
                 id="paint1_radial_21_53"
@@ -164,8 +164,8 @@ const HeroSection = () => {
                 gradientUnits="userSpaceOnUse"
                 gradientTransform="translate(56.6039 36.9093) rotate(63.4349) scale(29.0091)"
               >
-                <stop stop-color="white" />
-                <stop offset="1" stop-color="white" stop-opacity="0" />
+                <stop stopColor="white" />
+                <stop offset="1" stopColor="white" stopOpacity="0" />
               </radialGradient>
             </defs>
           </svg>
