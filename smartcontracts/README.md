@@ -1,13 +1,19 @@
-# Sample Hardhat Project
+# Final Project - Encode Solidity Bootcamp
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a script that deploys that contract.
+NFT Marketplace
+
+Contracts implemented:
+ - MyToken (ERC20 token having ERC20Votes extension)
+
+*Notes:*
+ - .env file was used to get most of configs/addresses/private keys and so on
+ - Format can be checked on .env.example
 
 Try running some of the following tasks:
 
 ```shell
-npx hardhat help
-npx hardhat test
-REPORT_GAS=true npx hardhat test
-npx hardhat node
-npx hardhat run scripts/deploy.ts
+yarn install
+yarn hardhat clean
+yarn hardhat compile
+
 ```
