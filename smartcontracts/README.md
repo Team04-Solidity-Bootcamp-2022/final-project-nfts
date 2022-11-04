@@ -16,6 +16,4 @@ yarn install
 yarn hardhat clean
 yarn hardhat compile
 
-# Deploy contracts, and perform several interactions (hardhat network)
-yarn hardhat run scripts/TestDeployTokenizedBallot.ts
 ```
