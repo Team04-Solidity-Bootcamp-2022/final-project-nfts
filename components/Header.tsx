@@ -1,6 +1,78 @@
 import Link from 'next/link';
+import { useState, useEffect } from 'react';
+import { ethers } from 'ethers';
 
 const Header = () => {
+  const [currentAccount, setCurrentAccount] = useState('');
+	const [correctNetwork, setCorrectNetwork] = useState(false);
+  // Checks if wallet is connected
+	const checkIfWalletIsConnected = async () => {
+		const { ethereum } = window
+		if (ethereum) {
+			console.log('Got the ethereum obejct: ', ethereum)
+		} else {
+			console.log('No Wallet found. Connect Wallet')
+		}
+
+		const accounts = await ethereum.request({ method: 'eth_accounts' })
+
+		if (accounts.length !== 0) {
+			console.log('Found authorized Account: ', accounts[0])
+			setCurrentAccount(accounts[0])
+		} else {
+			console.log('No authorized account found')
+		}
+  }
+  
+  // Checks if wallet is connected to the correct network
+	const checkCorrectNetwork = async () => {
+		const { ethereum } = window
+		let chainId = await ethereum.request({ method: 'eth_chainId' })
+		console.log('Connected to chain:' + chainId)
+
+		const goerliChainId = '0x5'
+
+		if (chainId !== goerliChainId) {
+			setCorrectNetwork(false)
+		} else {
+			setCorrectNetwork(true)
+		}
+	}
+
+  useEffect(() => {
+		checkIfWalletIsConnected()
+		checkCorrectNetwork()
+  }, [])
+  
+  // Calls Metamask to connect wallet on clicking Connect Wallet button
+	const connectWallet = async () => {
+		try {
+			const { ethereum } = window
+
+			if (!ethereum) {
+				console.log('Metamask not detected')
+				return
+			}
+			let chainId = await ethereum.request({ method: 'eth_chainId'})
+			console.log('Connected to chain:' + chainId)
+
+			const goerliChainId = '0x5'
+
+			if (chainId !== goerliChainId) {
+				alert('You are not connected to the Goerli Testnet!')
+				return
+			}
+
+			const accounts = await ethereum.request({ method: 'eth_requestAccounts' })
+
+			console.log('Found account', accounts[0])
+			setCurrentAccount(accounts[0])
+		} catch (error) {
+			console.log('Error connecting to metamask', error)
+		}
+	}
+
+
   return (
     <header className="header ud-top-0 ud-left-0 ud-flex ud-w-full ud-items-center ud-bg-transparent ud-transition ud-fixed ud-z-50">
       <div className="ud-container">
@@ -45,9 +117,10 @@ const Header = () => {
               </nav>
             </div>
             <div className="ud-hidden ud-justify-end ud-pr-16 sm:ud-flex lg:ud-pr-0">
-              <a
-                href="connect-wallet.html"
+            {currentAccount === '' ? (
+              <button
                 className="ud-flex ud-items-center ud-rounded-md ud-border-2 ud-border-white ud-py-3 ud-px-6 ud-text-base ud-font-semibold ud-text-white ud-transition ud-duration-300 ud-ease-in-out hover:ud-border-primary hover:ud-bg-primary lg:ud-px-4 xl:ud-px-6"
+                onClick={connectWallet}
               >
                 <span className="ud-pr-2">
                   <svg
@@ -64,7 +137,21 @@ const Header = () => {
                   </svg>
                 </span>
                 Wallet Connect
-              </a>
+              </button>
+            ) : correctNetwork ? (
+              <button
+				      className='ud-flex ud-items-center ud-rounded-md ud-border-2 ud-border-white ud-py-3 ud-px-6 ud-text-base ud-font-semibold ud-text-white ud-transition ud-duration-300 ud-ease-in-out hover:ud-border-primary hover:ud-bg-primary lg:ud-px-4 xl:ud-px-6'
+				      >
+              Disconnect
+              </button>
+            ) : (
+              <div className='flex flex-col justify-center items-center mb-20 font-bold text-2xl gap-y-3'>
+              <div>----------------------------------------</div>
+              <div>Please connect to the Goerli Testnet</div>
+              <div>and reload the page</div>
+              <div>----------------------------------------</div>
+              </div>
+            )}
             </div>
           </div>
         </div>
