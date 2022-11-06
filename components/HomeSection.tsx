@@ -1,4 +1,4 @@
-const HeroSection = () => {
+const Home = () => {
   return (
     <section
       id="home"
@@ -189,4 +189,4 @@ const HeroSection = () => {
   );
 };
 
-export default HeroSection;
+export default Home;
