@@ -90,7 +90,7 @@ const HeroSection = () => {
                 width="114.834"
                 height="114.834"
                 filterUnits="userSpaceOnUse"
-                color-interpolation-filters="sRGB"
+                colorInterpolationFilters="sRGB"
               >
                 <feFlood floodOpacity="0" result="BackgroundImageFix" />
                 <feBlend
@@ -111,7 +111,7 @@ const HeroSection = () => {
                 width="86.8342"
                 height="86.8342"
                 filterUnits="userSpaceOnUse"
-                color-interpolation-filters="sRGB"
+                colorInterpolationFilters="sRGB"
               >
                 <feFlood floodOpacity="0" result="BackgroundImageFix" />
                 <feBlend
