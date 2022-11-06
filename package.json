@@ -16,7 +16,8 @@
     "next": "13.0.1",
     "prettier": "^2.7.1",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "reactstrap": "^9.1.5"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.42.0",
