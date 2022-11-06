@@ -40,6 +40,9 @@ const Home = () => {
                 <a className="ud-mb-5 ud-inline-flex ud-items-center ud-justify-center ud-rounded-md ud-border-2 ud-border-white ud-py-3 ud-px-7 ud-text-base ud-font-semibold ud-text-white ud-transition-all hover:ud-border-primary hover:ud-bg-primary">
                   Buy NFT's
                 </a>
+                <a className="ud-mb-5 ud-inline-flex ud-items-center ud-justify-center ud-rounded-md ud-border-2 ud-border-white ud-py-3 ud-px-7 ud-text-base ud-font-semibold ud-text-white ud-transition-all hover:ud-border-secondary hover:ud-bg-secondary">
+                  My NFT's
+                </a>
               </div>
             </div>
           </div>

@@ -2,9 +2,15 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 
+import { Alert } from 'reactstrap';
+
+
 const Header = () => {
   const [currentAccount, setCurrentAccount] = useState('');
-	const [correctNetwork, setCorrectNetwork] = useState(false);
+  const [correctNetwork, setCorrectNetwork] = useState(false);
+  
+  const [warningAlert, setWarningAlert] = useState();
+
   // Checks if wallet is connected
 	const checkIfWalletIsConnected = async () => {
 		const { ethereum } = window
@@ -145,12 +151,24 @@ const Header = () => {
               Disconnect
               </button>
             ) : (
-              <div className='flex flex-col justify-center items-center mb-20 font-bold text-2xl gap-y-3'>
-              <div>----------------------------------------</div>
-              <div>Please connect to the Goerli Testnet</div>
-              <div>and reload the page</div>
-              <div>----------------------------------------</div>
-              </div>
+              <Alert color="warning" isOpen={ warningAlert }>
+              <span className="alert-icon">
+                <i className="ni ni-like-2"></i>
+              </span>
+              <span className="alert-text">
+                <strong>Warning!</strong>{" "}
+                Please connect to the Goerli Testnet and reload the page!
+              </span>
+              <button
+                type="button"
+                className="close"
+                data-dismiss="alert"
+                aria-label="Close"
+                onClick={() => {setWarningAlert(false)}}
+              >
+                  <span aria-hidden="true">&times;</span>
+              </button>
+          </Alert>
             )}
             </div>
           </div>
