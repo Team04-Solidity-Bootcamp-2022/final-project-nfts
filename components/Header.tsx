@@ -51,6 +51,16 @@ const Header = () => {
                       Marketplace
                     </Link>
                   </li>
+                  {account.isConnected && (
+                    <li className="ud-group ud-relative">
+                      <Link
+                        className="ud-mx-8 ud-flex ud-py-2 ud-text-base ud-font-semibold ud-text-white group-hover:ud-text-white lg:ud-mr-0 lg:ud-inline-flex lg:ud-py-6 lg:ud-px-0"
+                        href="/account"
+                      >
+                        Account
+                      </Link>
+                    </li>
+                  )}
                 </ul>
               </nav>
             </div>
