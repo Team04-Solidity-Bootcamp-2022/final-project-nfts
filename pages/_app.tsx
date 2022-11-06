@@ -5,7 +5,9 @@ import { chains, providers } from '@web3modal/ethereum';
 
 // Get projectID at https://cloud.walletconnect.com
 if (!process.env.NEXT_PUBLIC_WALLET_CONNECT_ID)
-  throw new Error('You need to provide NEXT_PUBLIC_PROJECT_ID env variable');
+  throw new Error(
+    'You need to provide NEXT_PUBLIC_WALLET_CONNECT_ID env variable'
+  );
 
 // Configure web3modal
 const modalConfig = {
