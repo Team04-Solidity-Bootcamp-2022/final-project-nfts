@@ -1,8 +1,10 @@
+import { useAccount, Web3Button } from '@web3modal/react';
 import Link from 'next/link';
 
 const Header = () => {
+  const { account } = useAccount();
   return (
-    <header className="header ud-top-0 ud-left-0 ud-flex ud-w-full ud-items-center ud-bg-transparent ud-transition ud-fixed ud-z-50">
+    <header className="header ud-top-0 ud-left-0 ud-flex ud-w-full ud-items-center ud-backdrop-blur-sm ud-transition ud-fixed ud-z-50">
       <div className="ud-container">
         <div className="ud-relative ud-mx-[-16px] ud-flex ud-items-center ud-justify-between">
           <div className="ud-w-60 ud-max-w-full ud-px-4">
@@ -34,37 +36,36 @@ const Header = () => {
               >
                 <ul className="ud-blcok lg:ud-flex">
                   <li className="ud-group ud-relative">
-                    <a
-                      href="index.html"
+                    <Link
                       className="ud-mx-8 ud-flex ud-py-2 ud-text-base ud-font-semibold ud-text-white group-hover:ud-text-white lg:ud-mr-0 lg:ud-inline-flex lg:ud-py-6 lg:ud-px-0"
+                      href="/"
                     >
                       Home
-                    </a>
+                    </Link>
                   </li>
+                  <li className="ud-group ud-relative">
+                    <Link
+                      className="ud-mx-8 ud-flex ud-py-2 ud-text-base ud-font-semibold ud-text-white group-hover:ud-text-white lg:ud-mr-0 lg:ud-inline-flex lg:ud-py-6 lg:ud-px-0"
+                      href="/marketplace"
+                    >
+                      Marketplace
+                    </Link>
+                  </li>
+                  {account.isConnected && (
+                    <li className="ud-group ud-relative">
+                      <Link
+                        className="ud-mx-8 ud-flex ud-py-2 ud-text-base ud-font-semibold ud-text-white group-hover:ud-text-white lg:ud-mr-0 lg:ud-inline-flex lg:ud-py-6 lg:ud-px-0"
+                        href="/account"
+                      >
+                        Account
+                      </Link>
+                    </li>
+                  )}
                 </ul>
               </nav>
             </div>
             <div className="ud-hidden ud-justify-end ud-pr-16 sm:ud-flex lg:ud-pr-0">
-              <a
-                href="connect-wallet.html"
-                className="ud-flex ud-items-center ud-rounded-md ud-border-2 ud-border-white ud-py-3 ud-px-6 ud-text-base ud-font-semibold ud-text-white ud-transition ud-duration-300 ud-ease-in-out hover:ud-border-primary hover:ud-bg-primary lg:ud-px-4 xl:ud-px-6"
-              >
-                <span className="ud-pr-2">
-                  <svg
-                    width="23"
-                    height="24"
-                    viewBox="0 0 23 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M20.125 17.75V18.7083C20.125 19.2167 19.9231 19.7042 19.5636 20.0636C19.2042 20.4231 18.7167 20.625 18.2083 20.625H4.79167C3.72792 20.625 2.875 19.7625 2.875 18.7083V5.29167C2.875 4.78333 3.07693 4.29582 3.43638 3.93638C3.79582 3.57693 4.28334 3.375 4.79167 3.375H18.2083C18.7167 3.375 19.2042 3.57693 19.5636 3.93638C19.9231 4.29582 20.125 4.78333 20.125 5.29167V6.25H11.5C10.4363 6.25 9.58333 7.1125 9.58333 8.16667V15.8333C9.58333 16.3417 9.78527 16.8292 10.1447 17.1886C10.5042 17.5481 10.9917 17.75 11.5 17.75H20.125ZM11.5 15.8333H21.0833V8.16667H11.5V15.8333ZM15.3333 13.4375C14.9521 13.4375 14.5865 13.286 14.3169 13.0165C14.0473 12.7469 13.8958 12.3812 13.8958 12C13.8958 11.6188 14.0473 11.2531 14.3169 10.9835C14.5865 10.714 14.9521 10.5625 15.3333 10.5625C15.7146 10.5625 16.0802 10.714 16.3498 10.9835C16.6194 11.2531 16.7708 11.6188 16.7708 12C16.7708 12.3812 16.6194 12.7469 16.3498 13.0165C16.0802 13.286 15.7146 13.4375 15.3333 13.4375Z"
-                      fill="white"
-                    />
-                  </svg>
-                </span>
-                Wallet Connect
-              </a>
+              <Web3Button />
             </div>
           </div>
         </div>
