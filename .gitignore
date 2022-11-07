@@ -5,6 +5,9 @@
 /.pnp
 .pnp.js
 
+yarn-error.log
+yarn.lock
+.env
 # testing
 /coverage
 
