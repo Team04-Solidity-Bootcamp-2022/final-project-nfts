@@ -314,6 +314,8 @@ contract NftMarketplace is ReentrancyGuard {
     //   if (swapOffers[i].swapNftAddress == swapNftAddress && swapOffers[i].swapTokenId == swapTokenId) {
         delete (s_listings[nftAddress][tokenId]);
         delete (s_listings[swapNftAddress][swapTokenId]);
+
+        // TODO: remove from s_swapPledges
         
         console.log("Nft %s tokenId %s is approved to %s", swapNftAddress, swapTokenId, IERC721(swapNftAddress).getApproved(swapTokenId));
         // console.log("Nft %s tokenId %s is approved to %s", nftAddress, tokenId, IERC721(nftAddress).getApproved(tokenId));
