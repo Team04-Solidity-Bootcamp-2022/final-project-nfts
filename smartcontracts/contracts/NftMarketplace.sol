@@ -118,12 +118,12 @@ contract NftMarketplace is ReentrancyGuard {
   }
 
   // reverts if user has not pledged nft to a listing
-  modifier isSwappable(
-    address swapNftAddress,
-    uint256 swapTokenId,
+  function isSwappable(
     address listingNftAddress,
-    uint256 listingTokenId
-  ) {
+    address swapNftAddress,
+    uint256 listingTokenId,
+    uint256 swapTokenId
+  ) internal view returns (bool) {
     SwapPledge[] memory swapPledges = s_swapPledges[swapNftAddress][swapTokenId];
     bool isFound = false;
     uint256 i = 0;
@@ -132,10 +132,7 @@ contract NftMarketplace is ReentrancyGuard {
         isFound = true;
       }
     }
-    if(!isFound) {
-      revert NotPledged(swapNftAddress, swapTokenId);
-    } 
-    _;
+    return isFound;
   }
 
   function listItem(
@@ -302,35 +299,30 @@ contract NftMarketplace is ReentrancyGuard {
     external
     isOwner(nftAddress, tokenId, msg.sender)
     isListed(nftAddress, tokenId)
-    // isSwappable(swapNftAddress, swapTokenId, nftAddress, tokenId)
   {
     // TODO: use prices
     // s_proceeds[listedItem.seller] += msg.value;
    
-    // Swap[] memory swapOffers = s_swapOffers[nftAddress][tokenId];
+    require(isSwappable(nftAddress, swapNftAddress, tokenId, swapTokenId), "Cannot be swapped");
     
-    // uint256 i;
-    // while(i < swapOffers.length) {
-    //   if (swapOffers[i].swapNftAddress == swapNftAddress && swapOffers[i].swapTokenId == swapTokenId) {
-        delete (s_listings[nftAddress][tokenId]);
-        delete (s_listings[swapNftAddress][swapTokenId]);
+    delete (s_listings[nftAddress][tokenId]);
+    delete (s_listings[swapNftAddress][swapTokenId]);
 
-        // TODO: remove from s_swapPledges
-        
-        console.log("Nft %s tokenId %s is approved to %s", swapNftAddress, swapTokenId, IERC721(swapNftAddress).getApproved(swapTokenId));
-        // console.log("Nft %s tokenId %s is approved to %s", nftAddress, tokenId, IERC721(nftAddress).getApproved(tokenId));
+    // TODO: remove from s_swapPledges
+    
+    // console.log("Nft %s tokenId %s is approved to %s", swapNftAddress, swapTokenId, IERC721(swapNftAddress).getApproved(swapTokenId));
+    // console.log("Nft %s tokenId %s is approved to %s", nftAddress, tokenId, IERC721(nftAddress).getApproved(tokenId));
 
 
-        IERC721(swapNftAddress).transferFrom(swapper, msg.sender, swapTokenId);
-        IERC721(nftAddress).transferFrom(msg.sender, swapper, tokenId);
+    IERC721(swapNftAddress).transferFrom(swapper, msg.sender, swapTokenId);
+    IERC721(nftAddress).transferFrom(msg.sender, swapper, tokenId);
 
-        // delete swapOffers[i];
-        // s_swapOffers[nftAddress][tokenId] = swapOffers;
-        
-               
-         // emit ItemSwapped(msg.sender, swapOffers[i].swapper, nftAddress, swapNftAddress, tokenId, swapTokenId);
-      }
-    //  }
-  // }
+    // delete swapOffers[i];
+    // s_swapOffers[nftAddress][tokenId] = swapOffers;
+    
+          
+    // emit ItemSwapped(msg.sender, swapOffers[i].swapper, nftAddress, swapNftAddress, tokenId, swapTokenId);
+    // }
+
+  }
 }
-
