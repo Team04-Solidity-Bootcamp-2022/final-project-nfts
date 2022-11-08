@@ -3,17 +3,20 @@ pragma solidity ^0.8.7;
 
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
 error PriceNotMet(address nftAddress, uint256 tokenId, uint256 price);
 error ItemNotForSale(address nftAddress, uint256 tokenId);
 error NotListed(address nftAddress, uint256 tokenId);
+error NotInSwapPool(address nftAddress, uint256 tokenId);
+error AlreadyInSwapPool(address nftAddress, uint256 tokenId);
 error AlreadyListed(address nftAddress, uint256 tokenId);
 error NoProceeds();
 error NotOwner();
 error NotApprovedForMarketplace();
 error PriceMustBeAboveZero();
 
-contract NftMarketplace is ReentrancyGuard {
+contract NftMarketplace is ReentrancyGuard, Ownable {
   struct Listing {
     uint256 price;
     address seller;
@@ -24,6 +27,12 @@ contract NftMarketplace is ReentrancyGuard {
     address indexed nftAddress,
     uint256 indexed tokenId,
     uint256 price
+  );
+
+  event ItemAddedToSwapPool(
+    address indexed swapper,
+    address indexed nftAddress,
+    uint256 indexed tokenId
   );
 
   event ItemCancelled(
@@ -39,9 +48,19 @@ contract NftMarketplace is ReentrancyGuard {
     uint256 price
   );
 
+  event Swapped(
+    address swapper0,
+    address swapper1,
+    address indexed nftAddress,
+    uint256 indexed tokenId0,
+    uint256 indexed tokenId1
+  );
+
   // State variables
   mapping(address => mapping(uint256 => Listing)) private s_listings;
   mapping(address => uint256) private s_proceeds;
+  mapping(address => uint256[]) private s_swapPools;
+  mapping(address => mapping(uint256 => address)) private s_swapListings;
 
   // Function modifiers
   modifier notListed(
@@ -73,9 +92,29 @@ contract NftMarketplace is ReentrancyGuard {
     address nftAddress,
     uint256 tokenId
   ) {
-    Listing memory listing = s_listings[nftAddress][tokenId];
-    if (listing.price <= 0) {
+    if (s_listings[nftAddress][tokenId].price <= 0) {
       revert NotListed(nftAddress, tokenId);
+    }
+    _;
+  }
+
+  modifier isInSwapPool(
+    address nftAddress,
+    uint256 tokenId
+  ) {
+    address swapper = s_swapListings[nftAddress][tokenId];
+    if (swapper == address(0)) {
+      revert NotInSwapPool(nftAddress, tokenId);
+    }
+    _;
+  }
+
+  modifier notInSwapPool(
+    address nftAddress,
+    uint256 tokenId
+  ) {
+    if (s_swapListings[nftAddress][tokenId] != address(0)) {
+      revert AlreadyInSwapPool(nftAddress, tokenId);
     }
     _;
   }
@@ -89,17 +128,36 @@ contract NftMarketplace is ReentrancyGuard {
     notListed (nftAddress, tokenId, msg.sender)
     isOwner(nftAddress, tokenId, msg.sender)
   {
+    require(s_swapListings[nftAddress][tokenId] == address(0), "Already on swap pool");
     if (price <= 0) {
       revert PriceMustBeAboveZero();
     }
 
-    IERC721 nft = IERC721(nftAddress);
-    if (nft.getApproved(tokenId) != address(this)) {
+    if (IERC721(nftAddress).getApproved(tokenId) != address(this)) {
       revert NotApprovedForMarketplace();
     }
 
     s_listings[nftAddress][tokenId] = Listing(price, msg.sender);
     emit ItemListed(msg.sender, nftAddress, tokenId, price);
+  }
+
+  function listSwapItem(
+    address nftAddress,
+    uint256 tokenId
+  )
+    external
+    notListed (nftAddress, tokenId, msg.sender)
+    notInSwapPool(nftAddress, tokenId)
+    isOwner(nftAddress, tokenId, msg.sender)
+  {
+    if (IERC721(nftAddress).getApproved(tokenId) != address(this)) {
+      revert NotApprovedForMarketplace();
+    }
+
+    
+    s_swapListings[nftAddress][tokenId] = msg.sender;
+    s_swapPools[nftAddress].push(tokenId);
+    emit ItemAddedToSwapPool(msg.sender, nftAddress, tokenId);
   }
 
   function buyItem(
@@ -159,6 +217,11 @@ contract NftMarketplace is ReentrancyGuard {
   {
     delete (s_listings[nftAddress][tokenId]);
     emit ItemCancelled(msg.sender, nftAddress, tokenId);
+  }
+
+  function remove(address nftAddress, uint index) public{
+    s_swapPools[nftAddress][index] = s_swapPools[nftAddress][s_swapPools[nftAddress].length - 1];
+    s_swapPools[nftAddress].pop();
   }
 
   function getListing(address nftAddress, uint256 tokenId)
