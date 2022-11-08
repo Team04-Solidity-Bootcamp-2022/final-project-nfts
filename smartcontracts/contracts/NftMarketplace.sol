@@ -77,7 +77,7 @@ contract NftMarketplace is ReentrancyGuard {
   // Swap offers for an NFT
   mapping(address => mapping(uint256 => Swap[])) private s_swapOffers;
 
-  // NFT pledged to a swap (NFTadd => NFTtoken pledged to ==> listedNftaddress => listedTokenId)
+  // NFT pledged to potentially many swaps
   mapping(address => mapping(uint256 => SwapPledge[])) private s_swapPledges;
 
   // Function modifiers
