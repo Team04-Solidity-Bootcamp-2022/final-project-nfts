@@ -166,7 +166,7 @@ contract NftMarketplace is ReentrancyGuard, Ownable {
   )
     external
     isInSwapPool(nftAddress, tokenId)
-    isOwner(nftAddress, tokenId, msg.sender)
+    //isOwner(nftAddress, tokenId, msg.sender)
   {
     require(s_swapPools[nftAddress].length > 1, "Not enough nfts to swap, try later");
 
@@ -176,26 +176,34 @@ contract NftMarketplace is ReentrancyGuard, Ownable {
     }
 
     uint256 tokenId1 = s_swapPools[nftAddress][rndIndex];
-    address swapper1 = s_swapListings[nftAddress][tokenId1];
     IERC721(nftAddress).safeTransferFrom(
-      swapper1,
+      s_swapListings[nftAddress][tokenId1],
       msg.sender,
       tokenId1
     );
 
     IERC721(nftAddress).safeTransferFrom(
       msg.sender,
-      swapper1,
+      s_swapListings[nftAddress][tokenId1],
       tokenId
     );
 
     delete s_swapListings[nftAddress][tokenId];
+    delete s_swapListings[nftAddress][tokenId1];
 
     remove(nftAddress, rndIndex);
 
+    //FIXME
+    for(uint256 i = 0; i < s_swapPools[nftAddress].length; ++i) {
+      if(s_swapPools[nftAddress][i] == tokenId) {
+        remove(nftAddress, i);
+      }
+    }
+
+
     emit Swapped(
       msg.sender,
-      swapper1,
+      s_swapListings[nftAddress][tokenId1],
       nftAddress,
       tokenId,
       tokenId1
