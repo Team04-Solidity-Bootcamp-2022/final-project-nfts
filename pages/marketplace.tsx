@@ -49,9 +49,7 @@ export default function Marketplace() {
                   </div>
                   <div className="ud-relative ud-inline-flex">
                     <select className="ud-appearance-none ud-rounded-md ud-bg-[#353444] ud-py-3 ud-pl-5 ud-pr-10 ud-text-base ud-font-semibold ud-text-white ud-outline-none">
-                      <option value="" selected>
-                        Sort By
-                      </option>
+                      <option value="">Sort By</option>
                       <option value="">Top rate</option>
                       <option value="">Mid rate</option>
                       <option value="">Low rate</option>

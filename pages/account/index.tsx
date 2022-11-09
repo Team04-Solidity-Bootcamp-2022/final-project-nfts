@@ -1,12 +1,16 @@
 import Header from '../../components/Header';
 import Link from 'next/link';
-import { useAccount, useBalance, Web3Button } from '@web3modal/react';
+import { useAccount, useBalance } from '@web3modal/react';
+import { useState } from 'react';
+import MakeNFT from '../../components/MakeNFT';
 
 export default function Home() {
   const { account } = useAccount();
   const { data, isLoading, refetch } = useBalance({
     addressOrName: account.address,
   });
+  const [newNft, setNewNft] = useState('');
+  const [newNftName, setNewNftName] = useState('');
 
   if (!account.isConnected) {
     return (
@@ -46,7 +50,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="ud-pb-24">
+      <section className="ud-pb-14">
         <div className="ud-container">
           <h1 className="ud-mb-4 ud-text-[40px] ud-font-bold ud-leading-tight ud-text-white md:ud-text-[50px] lg:ud-text-[40px] xl:ud-text-[46px] 2xl:ud-text-[50px] sm:text-[46px]">
             My Account
@@ -98,6 +102,14 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <MakeNFT
+        newNft={newNft}
+        newNftName={newNftName}
+        setNewNft={setNewNft}
+        setNewNftName={setNewNftName}
+        account={account}
+      />
     </>
   );
 }
