@@ -2,6 +2,7 @@ import '../styles/globals.css';
 import type { AppProps } from 'next/app';
 import { Web3Modal } from '@web3modal/react';
 import { chains, providers } from '@web3modal/ethereum';
+import { QueryClient, QueryClientProvider } from 'react-query';
 
 // Get projectID at https://cloud.walletconnect.com
 if (!process.env.NEXT_PUBLIC_WALLET_CONNECT_ID)
@@ -26,11 +27,13 @@ const modalConfig = {
   },
 };
 
+const queryClient = new QueryClient();
+
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <>
+    <QueryClientProvider client={queryClient}>
       <Component {...pageProps} />
       <Web3Modal config={modalConfig} />
-    </>
+    </QueryClientProvider>
   );
 }
