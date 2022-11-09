@@ -12,8 +12,6 @@
     "@headlessui/react": "^1.7.4",
     "@heroicons/react": "^2.0.13",
     "@types/node": "18.11.8",
-    "@types/react": "18.0.24",
-    "@types/react-dom": "18.0.8",
     "@web3modal/ethereum": "^2.0.0-beta.2",
     "@web3modal/react": "^2.0.0-beta.2",
     "ethers": "^5.7.2",
@@ -22,9 +20,13 @@
     "prettier": "^2.7.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-loader-spinner": "^5.3.4",
+    "react-query": "^3.39.2",
     "unique-names-generator": "^4.7.1"
   },
   "devDependencies": {
+    "@types/react": "^18.0.25",
+    "@types/react-dom": "^18.0.8",
     "@typescript-eslint/eslint-plugin": "^5.42.0",
     "autoprefixer": "^10.4.13",
     "eslint": "^8.26.0",

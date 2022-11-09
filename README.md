@@ -1,8 +1,8 @@
 # NFT Swap / Marketplace
 
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+## TESTING PURPOSES ONLY DO NOT USE IN PRODUCTION ENVIRONMENTS!!!
 
-## Getting Started
+### Getting Started
 
 First, run the development server:
 
@@ -11,6 +11,7 @@ npm run dev
 # or
 yarn dev
 ```
-## Development
+
+### Development
 
 Main branch to auto deploy to production. [workflow](https://nvie.com/posts/a-successful-git-branching-model/)
