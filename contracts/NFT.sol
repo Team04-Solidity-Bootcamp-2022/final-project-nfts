@@ -1,3 +1,0 @@
-/*
-    Smart contract example
-*/
