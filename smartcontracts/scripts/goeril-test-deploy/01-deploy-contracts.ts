@@ -1,24 +1,15 @@
-import { ethers } from 'ethers';
-import { NftMarketplace__factory } from '../../typechain-types';
-import { MyNFT__factory } from '../../typechain-types';
+import {
+  NftMarketplace__factory,
+  BasicNft__factory,
+} from '../../typechain-types';
+import { getSigner } from './_utils';
 import * as dotenv from 'dotenv';
 dotenv.config();
 
-const getSigner = () => {
-  const options = {
-    alchemy: process.env.ALCHEMY_API_KEY,
-    infura: process.env.INFURA_API_KEY,
-    etherscan: process.env.ETHERSCAN_API_KEY,
-  };
-  const provider = ethers.getDefaultProvider('goerli', options);
-  const wallet = ethers.Wallet.fromMnemonic(process.env.MNEMONIC ?? '');
-  console.log(`Using address ${wallet.address}`);
-  const signer = wallet.connect(provider);
-  return signer;
-};
-
 const deployMarketPlaceContract = async () => {
-  const signer = await getSigner();
+  const signer = await getSigner(
+    process.env.SCRIPT_01_DEPLOYER_ACCOUNT_MNEMONIC || ''
+  );
   const factory = new NftMarketplace__factory(signer);
   const contract = await factory.deploy();
   await contract.deployed();
@@ -26,8 +17,10 @@ const deployMarketPlaceContract = async () => {
 };
 
 const deployNFTContract = async () => {
-  const signer = await getSigner();
-  const factory = new MyNFT__factory(signer);
+  const signer = await getSigner(
+    process.env.SCRIPT_01_DEPLOYER_ACCOUNT_MNEMONIC || ''
+  );
+  const factory = new BasicNft__factory(signer);
   const contract = await factory.deploy();
   await contract.deployed();
   return contract;
@@ -36,8 +29,8 @@ const deployNFTContract = async () => {
 const main = async () => {
   const marketplace = await deployMarketPlaceContract();
   const token = await deployNFTContract();
-  console.log(marketplace.address);
-  console.log(token.address);
+  console.log(`MARKETPLACE CONTRACT ADDRESS: ${marketplace.address}`);
+  console.log(`NFT CONTRACT ADDRESS: ${token.address}`);
 };
 
 main().catch((error) => {
