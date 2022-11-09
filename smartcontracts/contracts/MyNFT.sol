@@ -10,18 +10,25 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 contract MyNFT is ERC721, ERC721Enumerable, ERC721Burnable, AccessControl {
     using Counters for Counters.Counter;
 
-    bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
     Counters.Counter private _tokenIdCounter;
+    uint16 private _MAX_MINTS = 100;
 
     constructor() ERC721("MyNFT", "MNFT") {
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
-        _grantRole(MINTER_ROLE, msg.sender);
     }
 
-    function safeMint(address to) public onlyRole(MINTER_ROLE) {
+    function safeMint(address to) public onlyRole(DEFAULT_ADMIN_ROLE) {
         uint256 tokenId = _tokenIdCounter.current();
+        require(tokenId < _MAX_MINTS, "Max Mints achieved, cant mint more");
         _tokenIdCounter.increment();
         _safeMint(to, tokenId);
+    }
+
+    function mint() public {
+        uint256 tokenId = _tokenIdCounter.current();
+        require(tokenId < _MAX_MINTS, "Max Mints achieved, cant mint more");
+        _tokenIdCounter.increment();
+        _safeMint(msg.sender, tokenId);
     }
 
     // The following functions are overrides required by Solidity.
