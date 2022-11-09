@@ -13,9 +13,11 @@ describe("NftMarketplace", async () => {
     let deployer: SignerWithAddress;
     let acc1: SignerWithAddress;
     let acc2: SignerWithAddress;
+    let acc3: SignerWithAddress;
+    let acc4: SignerWithAddress;
 
     beforeEach(async () => {
-        [deployer, acc1, acc2] = await ethers.getSigners();
+        [deployer, acc1, acc2, acc3, acc4] = await ethers.getSigners();
         const nftMarketplaceContractFactory = await ethers.getContractFactory("NftMarketplace");
         nftMarketplaceContract = await nftMarketplaceContractFactory.deploy();
         await nftMarketplaceContract.deployed();
@@ -128,6 +130,147 @@ describe("NftMarketplace", async () => {
 
             });
         });
+    });
+
+    describe("Use Swap Pool", async () => {
+        let myNFTContract: MyNFT;
+
+        beforeEach(async () => {
+            const myNFTContractFactory = await ethers.getContractFactory("MyNFT");
+            myNFTContract = await myNFTContractFactory.deploy();
+            await myNFTContract.deployed();
+
+            const mint1Tx = await myNFTContract.safeMint(acc1.address);
+            const mint1TxReceipt = await mint1Tx.wait();
+
+            const approveTx = await myNFTContract.connect(acc1).approve(nftMarketplaceContract.address,0);
+            const approveTxReceipt = approveTx.wait();
+        });
+
+        it("lists nft in swap pool", async () => {
+            const listNFTTx = await nftMarketplaceContract.connect(acc1).listSwapItem(
+                myNFTContract.address,
+                0
+            );
+            const listNFTTxReceipt = await listNFTTx.wait();
+
+            const getSwapPoolItem = await nftMarketplaceContract.getSwapPoolListing(myNFTContract.address, 0);
+
+            const getSwapPool = await nftMarketplaceContract.getSwapPool(myNFTContract.address);
+
+            expect(getSwapPoolItem).to.eq(acc1.address);
+            expect(getSwapPool.length).to.eq(1);
+        });
+        describe("After 1st listing", async () => {
+            beforeEach(async () => {
+                const listNFTTx = await nftMarketplaceContract.connect(acc1).listSwapItem(
+                    myNFTContract.address,
+                    0
+                );
+                const listNFTTxReceipt = await listNFTTx.wait();
+
+                const mint2Tx = await myNFTContract.safeMint(acc2.address);
+                const mint2TxReceipt = await mint2Tx.wait();
+
+                const approve2Tx = await myNFTContract.connect(acc2).approve(nftMarketplaceContract.address,1);
+                const approve2TxReceipt = approve2Tx.wait();
+
+                const mint3Tx = await myNFTContract.safeMint(acc3.address);
+                const mint3TxReceipt = await mint3Tx.wait();
+
+                const approve3Tx = await myNFTContract.connect(acc3).approve(nftMarketplaceContract.address,2);
+                const approve3TxReceipt = approve3Tx.wait();
+            });
+
+            it("lists 2nd nft in swap pool", async () => {
+                const listNFTTx = await nftMarketplaceContract.connect(acc2).listSwapItem(
+                    myNFTContract.address,
+                    1
+                );
+                const listNFTTxReceipt = await listNFTTx.wait();
+    
+                const getSwapPoolItem = await nftMarketplaceContract.getSwapPoolListing(myNFTContract.address, 1);
+    
+                const getSwapPool = await nftMarketplaceContract.getSwapPool(myNFTContract.address);
+    
+                expect(getSwapPoolItem).to.eq(acc2.address);
+                expect(getSwapPool.length).to.eq(2);
+            });
+
+            it("Swaps NFTs with a Pool of length 2", async () => {
+                const listNFTTx = await nftMarketplaceContract.connect(acc2).listSwapItem(
+                    myNFTContract.address,
+                    1
+                );
+                const listNFTTxReceipt = await listNFTTx.wait();
+                
+                const randomNFTSwapTx = await nftMarketplaceContract.connect(acc1).randomNFTSwap(
+                    myNFTContract.address,
+                    0
+                );
+                const randomNFTSwapTxReceipt = await randomNFTSwapTx.wait();
+    
+                const getOwnerOfNFT0 = await myNFTContract.ownerOf(0);
+    
+                const getOwnerOfNFT1 = await myNFTContract.ownerOf(1);
+                
+                expect(getOwnerOfNFT0).to.eq(acc2.address);
+                expect(getOwnerOfNFT1).to.eq(acc1.address);
+                
+                const getSwapPoolItem0 = await nftMarketplaceContract.getSwapPoolListing(myNFTContract.address, 0);
+                const getSwapPoolItem1 = await nftMarketplaceContract.getSwapPoolListing(myNFTContract.address, 1);
+    
+                const getSwapPool = await nftMarketplaceContract.getSwapPool(myNFTContract.address);
+
+                expect(getSwapPoolItem0).to.eq(ethers.constants.AddressZero);
+                expect(getSwapPoolItem1).to.eq(ethers.constants.AddressZero);
+                expect(getSwapPool.length).to.eq(0);
+
+            });
+
+            it("Swaps NFTs with a Pool of length > 2", async () => {
+                const listNFT1Tx = await nftMarketplaceContract.connect(acc2).listSwapItem(
+                    myNFTContract.address,
+                    1
+                );
+                const listNFT1TxReceipt = await listNFT1Tx.wait();
+
+                const listNFT2Tx = await nftMarketplaceContract.connect(acc3).listSwapItem(
+                    myNFTContract.address,
+                    2
+                );
+                const listNFT2TxReceipt = await listNFT2Tx.wait();
+                
+                const getSwapPoolBefore = await nftMarketplaceContract.getSwapPool(myNFTContract.address);
+                expect(getSwapPoolBefore.length).to.eq(3);
+
+                const randomNFTSwapTx = await nftMarketplaceContract.connect(acc2).randomNFTSwap(
+                    myNFTContract.address,
+                    1
+                );
+                const randomNFTSwapTxReceipt = await randomNFTSwapTx.wait();
+    
+                const getOwnerOfNFT0 = await myNFTContract.ownerOf(0);
+    
+                const getOwnerOfNFT1 = await myNFTContract.ownerOf(1);
+    
+                const getOwnerOfNFT2 = await myNFTContract.ownerOf(2);
+                
+                expect(getOwnerOfNFT1).to.not.eq(acc2.address);
+                expect(acc2.address).to.be.oneOf([getOwnerOfNFT0, getOwnerOfNFT2]);
+
+                const getSwapPoolItem1 = await nftMarketplaceContract.getSwapPoolListing(myNFTContract.address, 1);
+    
+                const getSwapPool = await nftMarketplaceContract.getSwapPool(myNFTContract.address);
+
+                expect(getSwapPoolItem1).to.eq(ethers.constants.AddressZero);
+                expect(getSwapPool.length).to.eq(1);
+
+            });
+
+        });
+
+
     });
 
 
