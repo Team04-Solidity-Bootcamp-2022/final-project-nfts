@@ -14,7 +14,7 @@ const MyAccount = () => {
         <div className="ud-relative ud-z-10 ud-overflow-hidden ud-rounded-xl ud-bg-bg-color">
           <form className="ud-p-8 sm:ud-p-10">
             <div className="ud--mx-5 ud-flex ud-flex-wrap xl:ud--mx-8">
-              <div className="ud-w-full ud-px-5 lg:ud-w-7/12 xl:ud-px-8">
+              <div className="ud-w-full ud-px-5 xl:ud-px-8">
                 <div>
                   <div className="ud-mb-5">
                     <label className="ud-mb-2 ud-block ud-text-base ud-font-medium ud-text-white">
@@ -24,7 +24,7 @@ const MyAccount = () => {
                       type="text"
                       name="title"
                       id="title"
-                      value={account.address}
+                      defaultValue={account.address}
                       className="ud-w-full ud-rounded-md ud-border ud-border-stroke ud-bg-[#353444] ud-py-3 ud-px-6 ud-text-base ud-font-medium ud-text-body-color ud-outline-none ud-transition-all focus:ud-bg-[#454457] focus:ud-shadow-input"
                       readOnly
                     />
@@ -37,7 +37,7 @@ const MyAccount = () => {
                       type="text"
                       name="title"
                       id="title"
-                      value={isLoading ? 'Loading...' : data?.formatted}
+                      defaultValue={isLoading ? 'Loading...' : data?.formatted}
                       className="text-white ud-w-full ud-rounded-md ud-border ud-border-stroke ud-bg-[#353444] ud-py-3 ud-px-6 ud-text-base ud-font-medium ud-text-body-color ud-outline-none ud-transition-all focus:ud-bg-[#454457] focus:ud-shadow-input"
                       readOnly
                     />
