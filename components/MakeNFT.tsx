@@ -20,7 +20,7 @@ const MakeNFT = ({
   const config = {
     address: process.env.NEXT_PUBLIC_NFT_CONTRACT_ADDRESS || '',
     abi: nftABI.abi,
-    functionName: 'mintNft',
+    functionName: 'mint',
     chainId: chains.goerli.id,
   };
 

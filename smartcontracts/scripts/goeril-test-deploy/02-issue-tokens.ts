@@ -15,7 +15,7 @@ const main = async () => {
   console.log(
     `Minting NFT for ${process.env.SCRIPT_02_TOKEN_OWNER_ACCOUNT_ADDRESS}`
   );
-  const mintTx = await tokenContract.mintNft();
+  const mintTx = await tokenContract.mint();
   const mintTxReceipt: any = await mintTx.wait();
   const tokenId = mintTxReceipt.events[0].args.tokenId;
   console.log(`Token ID: ${tokenId.toString()}`);
