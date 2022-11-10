@@ -18,6 +18,7 @@ type Data = {
   price: string;
   image: string;
   name: string;
+  listed: boolean;
 };
 
 type DataArr = Data[];
@@ -39,9 +40,9 @@ export default async function handler(
   res: NextApiResponse<DataArr>
 ) {
   const givenAddress = req.query.address;
-  const marketAddress = process.env.MARKET_ADDRESS || '';
-  const tokenAddress = process.env.TOKEN_ADDRESS || '';
-  const signer = getSigner(process.env.MARKET_OWNER || '');
+  const marketAddress = process.env.MARKETPLACE_CONTRACT_ADDRESS || '';
+  const tokenAddress = process.env.NFT_CONTRACT_ADDRESS || '';
+  const signer = getSigner(process.env.DEPLOYER_ACCOUNT_MNEMONIC || '');
   const marketContract = new ethers.Contract(
     marketAddress,
     marketABI.abi,
@@ -49,29 +50,35 @@ export default async function handler(
   );
 
   const tokenContract = new ethers.Contract(tokenAddress, nftABI.abi, signer);
-  const balance = await tokenContract.balanceOf(givenAddress);
 
-  const tokens: DataArr = [];
-  for (let i = 0; i < balance.toNumber(); i++) {
-    const id = await tokenContract.tokenOfOwnerByIndex(givenAddress, i);
+  const filter = tokenContract.filters.Transfer(null, givenAddress);
+  let transferEvents = await tokenContract.queryFilter(filter);
 
-    const image = generateFromString(`${id.toNumber()}${Math.random()}`);
+  const ids: any[] = [];
+  transferEvents.map((evt: any) => {
+    const tokenId = evt.args.tokenId.toNumber().toString();
+    ids.push(tokenId);
+  });
+
+  const nfts: any = ids.map((id) => {
+    const image = generateFromString(`${id}${Math.random()}`);
     const name = uniqueNamesGenerator({
       dictionaries: [adjectives, colors, animals],
       separator: ' ',
       style: 'capital',
-      seed: `${id.toNumber()}${Math.random()}`,
+      seed: `${id}${Math.random()}`,
     });
 
-    tokens.push({
-      seller: givenAddress?.toString(),
-      nftAddress: tokenAddress.toString(),
-      tokenId: id.toNumber().toString(),
+    return {
+      nftAddress: process.env.NFT_CONTRACT_ADDRESS || '',
+      seller: givenAddress,
+      tokenId: id,
+      price: '0',
       image: image,
       name: name,
-      price: '',
-    });
-  }
+      listed: false,
+    };
+  });
 
-  res.status(200).json(tokens);
+  res.status(200).json(nfts);
 }

@@ -37,8 +37,8 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<DataArr>
 ) {
-  const address = process.env.MARKET_ADDRESS || '';
-  const signer = getSigner(process.env.MARKET_OWNER || '');
+  const address = process.env.MARKETPLACE_CONTRACT_ADDRESS || '';
+  const signer = getSigner(process.env.DEPLOYER_ACCOUNT_MNEMONIC || '');
   const marketContract = new ethers.Contract(address, marketABI.abi, signer);
   const listFilter = marketContract.filters.ItemListed();
   const events = await marketContract.queryFilter(listFilter);

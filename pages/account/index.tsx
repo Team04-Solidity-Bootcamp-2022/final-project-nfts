@@ -1,12 +1,17 @@
 import Header from '../../components/Header';
 import Link from 'next/link';
-import { useAccount } from '@web3modal/react';
+import { useAccount, useContract } from '@web3modal/react';
 import MyAccount from '../../components/account/MyAccount';
 import CreateNFT from '../../components/account/CreateNFT';
 import MyNFT from '../../components/account/MyNFT';
+import nftABI from '../../data/nftABI.json';
 
 export default function Home() {
   const { account } = useAccount();
+  const { contract } = useContract({
+    address: process.env.NEXT_PUBLIC_NFT_CONTRACT_ADDRESS || '',
+    abi: nftABI.abi,
+  });
 
   if (!account.isConnected) {
     return (
@@ -48,7 +53,7 @@ export default function Home() {
 
       <MyAccount />
 
-      <MyNFT account={account} />
+      <MyNFT account={account} contract={contract} />
 
       <CreateNFT />
     </>

@@ -1,27 +1,6 @@
-import { NftMarketplace__factory, MyNFT__factory } from '../../typechain-types';
-import { getSigner } from './_utils';
+import { deployNFTContract, deployMarketPlaceContract } from './_utils';
 import * as dotenv from 'dotenv';
 dotenv.config();
-
-const deployMarketPlaceContract = async () => {
-  const signer = await getSigner(
-    process.env.SCRIPT_01_DEPLOYER_ACCOUNT_MNEMONIC || ''
-  );
-  const factory = new NftMarketplace__factory(signer);
-  const contract = await factory.deploy();
-  await contract.deployed();
-  return contract;
-};
-
-const deployNFTContract = async () => {
-  const signer = await getSigner(
-    process.env.SCRIPT_01_DEPLOYER_ACCOUNT_MNEMONIC || ''
-  );
-  const factory = new MyNFT__factory(signer);
-  const contract = await factory.deploy();
-  await contract.deployed();
-  return contract;
-};
 
 const main = async () => {
   const marketplace = await deployMarketPlaceContract();

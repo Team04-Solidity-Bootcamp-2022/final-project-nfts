@@ -1,16 +1,26 @@
-import { connectMarketContract } from './_utils';
+import { connectMarketContract, connectNftContract } from './_utils';
 import * as dotenv from 'dotenv';
+import { BigNumber } from 'ethers';
 dotenv.config();
 
 const main = async () => {
-  const marketContract = await connectMarketContract(
-    process.env.SCRIPT_01_DEPLOYER_ACCOUNT_MNEMONIC || '',
-    process.env.SCRIPT_02_MARKETPLACE_CONTRACT_ADDRESS || ''
+  let tokenContract = await connectNftContract(
+    process.env.DEPLOYER_ACCOUNT_MNEMONIC || '',
+    process.env.NFT_CONTRACT_ADDRESS || ''
   );
 
-  const listFilter = marketContract.filters.ItemListed();
-  let events = await marketContract.queryFilter(listFilter);
-  console.log(events);
+  const filter = tokenContract.filters.Transfer(
+    null,
+    process.env.NFT_OWNER_ACCOUNT_ADDRESS
+  );
+
+  let events = await tokenContract.queryFilter(filter);
+
+  const ids: BigNumber[] = [];
+  events.map(async (evt: any) => {
+    const tokenId = evt.args.tokenId;
+    ids.push(tokenId);
+  });
 };
 
 main().catch((error) => {
