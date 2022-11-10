@@ -1,9 +1,6 @@
 import { ethers } from 'ethers';
 import * as dotenv from 'dotenv';
-import {
-  BasicNft__factory,
-  NftMarketplace__factory,
-} from '../../typechain-types';
+import { MyNFT__factory, NftMarketplace__factory } from '../../typechain-types';
 dotenv.config();
 
 const getSigner = (mnemonic: string) => {
@@ -21,7 +18,7 @@ const getSigner = (mnemonic: string) => {
 
 const connectNftContract = async (mnemonic: string, address: string) => {
   const signer = await getSigner(mnemonic);
-  const factory = new BasicNft__factory(signer);
+  const factory = new MyNFT__factory(signer);
   const contract = await factory.attach(address);
   return contract;
 };
