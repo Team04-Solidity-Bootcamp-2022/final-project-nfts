@@ -1,6 +1,10 @@
 import { chains } from '@web3modal/ethereum';
-import { useContractWrite, useWaitForTransaction } from '@web3modal/react';
-import nftABI from '../data/nftABI.json';
+import {
+  useContractWrite,
+  useWaitForTransaction,
+  useAccount,
+} from '@web3modal/react';
+import nftABI from '../../data/nftABI.json';
 import {
   uniqueNamesGenerator,
   adjectives,
@@ -8,22 +12,20 @@ import {
   animals,
 } from 'unique-names-generator';
 import { generateFromString } from 'generate-avatar';
-import SuccessModal from '../components/SuccessModal';
+import SuccessModal from '../SuccessModal';
+import { useState } from 'react';
 
-const MakeNFT = ({
-  newNft,
-  newNftName,
-  setNewNft,
-  setNewNftName,
-  account,
-}: any) => {
-  const config = {
-    address: process.env.NEXT_PUBLIC_NFT_CONTRACT_ADDRESS || '',
-    abi: nftABI.abi,
-    functionName: 'mint',
-    chainId: chains.goerli.id,
-  };
+const config = {
+  address: process.env.NEXT_PUBLIC_NFT_CONTRACT_ADDRESS || '',
+  abi: nftABI.abi,
+  functionName: 'mint',
+  chainId: chains.goerli.id,
+};
 
+const CreateNFT = () => {
+  const { account } = useAccount();
+  const [newNft, setNewNft] = useState('');
+  const [newNftName, setNewNftName] = useState('');
   const { data, error, isLoading, write } = useContractWrite(config);
   const { receipt, isWaiting } = useWaitForTransaction({ hash: data?.hash });
 
@@ -62,7 +64,7 @@ const MakeNFT = ({
             }}
             className="hover:ud-shadow-form ud-w-full ud-rounded-md ud-bg-primary ud-py-3 ud-px-8 ud-text-center ud-text-base ud-font-semibold ud-text-white ud-outline-none"
           >
-            Generate NFT
+            Create NFT
           </button>
         </div>
 
@@ -142,4 +144,4 @@ const MakeNFT = ({
   );
 };
 
-export default MakeNFT;
+export default CreateNFT;
