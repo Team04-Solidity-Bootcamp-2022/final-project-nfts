@@ -1,9 +1,6 @@
 import { ethers } from 'ethers';
 import * as dotenv from 'dotenv';
-import {
-  NftMarketplace__factory,
-  BasicNft__factory,
-} from '../../typechain-types';
+import { NftMarketplace__factory, MyNFT__factory } from '../../typechain-types';
 dotenv.config();
 
 const getSigner = (mnemonic: string) => {
@@ -29,7 +26,7 @@ const deployMarketPlaceContract = async () => {
 
 const deployNFTContract = async () => {
   const signer = await getSigner(process.env.DEPLOYER_ACCOUNT_MNEMONIC || '');
-  const factory = new BasicNft__factory(signer);
+  const factory = new MyNFT__factory(signer);
   const contract = await factory.deploy();
   await contract.deployed();
   return contract;
@@ -37,7 +34,7 @@ const deployNFTContract = async () => {
 
 const connectNftContract = async (mnemonic: string, address: string) => {
   const signer = await getSigner(mnemonic);
-  const factory = new BasicNft__factory(signer);
+  const factory = new MyNFT__factory(signer);
   const contract = await factory.attach(address);
   return contract;
 };
