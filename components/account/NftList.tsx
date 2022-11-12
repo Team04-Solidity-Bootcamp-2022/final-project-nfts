@@ -4,6 +4,7 @@ import ApproveButton from './ApproveButton';
 import ListButton from './ListButton';
 import generateName from '../../utils/generateName';
 import generateSvg from '../../utils/generateSvg';
+import ErrorAlert from '../ErrorAlert';
 
 const fetchEvents = async (address: any) => {
   const response = await fetch(`/api/account-nft-list?address=${address}`);
@@ -121,6 +122,12 @@ const NftList = ({ account }: any) => {
                   </div>
                 </div>
               ))}
+            </div>
+          )}
+
+          {status === 'error' && (
+            <div className=" ud-w-full ud-flex ud-flex-wrap">
+              <ErrorAlert msg="Try refreshing the page to load your NFTs." />
             </div>
           )}
         </div>
