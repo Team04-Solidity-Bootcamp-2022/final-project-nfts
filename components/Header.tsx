@@ -11,7 +11,7 @@ const Header = () => {
             <Link legacyBehavior href="/">
               <a className="header-logo ud-block ud-w-full ud-py-5 lg:ud-py-7">
                 <img
-                  src="images/logo.svg"
+                  src="/images/logo.svg"
                   alt="logo"
                   className="ud-h-10 ud-max-w-full"
                 />
@@ -52,14 +52,24 @@ const Header = () => {
                     </Link>
                   </li>
                   {account.isConnected && (
-                    <li className="ud-group ud-relative">
-                      <Link
-                        className="ud-mx-8 ud-flex ud-py-2 ud-text-base ud-font-semibold ud-text-white group-hover:ud-text-white lg:ud-mr-0 lg:ud-inline-flex lg:ud-py-6 lg:ud-px-0"
-                        href="/account"
-                      >
-                        Account
-                      </Link>
-                    </li>
+                    <>
+                      <li className="ud-group ud-relative">
+                        <Link
+                          className="ud-mx-8 ud-flex ud-py-2 ud-text-base ud-font-semibold ud-text-white group-hover:ud-text-white lg:ud-mr-0 lg:ud-inline-flex lg:ud-py-6 lg:ud-px-0"
+                          href="/account"
+                        >
+                          Account
+                        </Link>
+                      </li>
+                      <li className="ud-group ud-relative">
+                        <Link
+                          className="ud-mx-8 ud-flex ud-py-2 ud-text-base ud-font-semibold ud-text-white group-hover:ud-text-white lg:ud-mr-0 lg:ud-inline-flex lg:ud-py-6 lg:ud-px-0"
+                          href="/account/create-nft"
+                        >
+                          Create NFT
+                        </Link>
+                      </li>
+                    </>
                   )}
                 </ul>
               </nav>

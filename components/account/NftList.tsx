@@ -1,12 +1,17 @@
 import { useQuery } from 'react-query';
+import { ThreeCircles } from 'react-loader-spinner';
+import ApproveButton from './ApproveButton';
+import ListButton from './ListButton';
+import generateName from '../../utils/generateName';
+import generateSvg from '../../utils/generateSvg';
+import ErrorAlert from '../ErrorAlert';
 
 const fetchEvents = async (address: any) => {
-  console.log(address);
-  const response = await fetch(`/api/mynft?address=${address}`);
+  const response = await fetch(`/api/account-nft-list?address=${address}`);
   return response.json();
 };
 
-const MyNFT = ({ account }: any) => {
+const NftList = ({ account }: any) => {
   const { data, status } = useQuery(['myNFT', account.address], () =>
     fetchEvents(account.address)
   );
@@ -19,6 +24,23 @@ const MyNFT = ({ account }: any) => {
             My NFT's
           </h1>
 
+          {status === 'loading' && (
+            <div className="ud-content-center">
+              <ThreeCircles
+                height="300"
+                width="300"
+                color="#5142FC"
+                wrapperStyle={{}}
+                wrapperClass="ud-justify-center"
+                visible={true}
+                ariaLabel="three-circles-rotating"
+                outerCircleColor=""
+                innerCircleColor=""
+                middleCircleColor=""
+              />
+            </div>
+          )}
+
           {status === 'success' && (
             <div className="ud--mx-4 ud-flex ud-flex-wrap">
               {data.map((nft: any) => (
@@ -29,7 +51,7 @@ const MyNFT = ({ account }: any) => {
                   <div className="ud-mb-10 ud-rounded-xl ud-border ud-border-stroke ud-bg-bg-color ud-p-[18px]">
                     <div className="ud-relative ud-mb-5 ud-overflow-hidden ud-rounded-lg">
                       <img
-                        src={`data:image/svg+xml;utf8,${nft.image}`}
+                        src={`data:image/svg+xml;utf8,${generateSvg(nft.id)}`}
                         alt="auctions"
                         className="ud-w-full"
                       />
@@ -58,7 +80,7 @@ const MyNFT = ({ account }: any) => {
                           href="item-details.html"
                           className="ud-mb-3 ud-inline-block ud-text-lg ud-font-semibold ud-text-white hover:ud-text-primary"
                         >
-                          {nft.name}
+                          {generateName(nft.tokenId)}
                         </a>
                       </h3>
                       <div className="ud-mb-6 ud-flex ud-items-center ud-justify-between">
@@ -92,31 +114,20 @@ const MyNFT = ({ account }: any) => {
                       </div>
 
                       <div className="ud-flex ud-items-center ud-justify-between ud-border-t-2 ud-border-stroke ud-pt-5">
-                        <a className="ud-flex ud-items-center ud-justify-center ud-rounded-md ud-bg-primary ud-py-3 ud-px-4 ud-text-sm ud-font-semibold ud-text-white ud-transition-all hover:ud-bg-opacity-90 sm:ud-px-5">
-                          Buy
-                        </a>
-                        <a className="ud-flex ud-items-center ud-justify-center ud-rounded-md ud-py-3 ud-px-4 ud-text-sm ud-font-semibold ud-text-white hover:ud-text-primary sm:ud-px-5">
-                          <span className="ud-pr-1">
-                            <svg
-                              width="18"
-                              height="18"
-                              viewBox="0 0 18 18"
-                              fill="none"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <path
-                                d="M9 4.5V6.75L12 3.75L9 0.75V3C7.4087 3 5.88258 3.63214 4.75736 4.75736C3.63214 5.88258 3 7.4087 3 9C3 10.1775 3.345 11.2725 3.93 12.195L5.025 11.1C4.6875 10.4775 4.5 9.75 4.5 9C4.5 7.80653 4.97411 6.66193 5.81802 5.81802C6.66193 4.97411 7.80652 4.5 9 4.5ZM14.07 5.805L12.975 6.9C13.305 7.53 13.5 8.25 13.5 9C13.5 10.1935 13.0259 11.3381 12.182 12.182C11.3381 13.0259 10.1935 13.5 9 13.5V11.25L6 14.25L9 17.25V15C10.5913 15 12.1174 14.3679 13.2426 13.2426C14.3679 12.1174 15 10.5913 15 9C15 7.8225 14.655 6.7275 14.07 5.805Z"
-                                fill="currentColor"
-                              />
-                            </svg>
-                          </span>
-                          Swap
-                        </a>
+                        {!nft.listed && <ApproveButton tokenId={nft.tokenId} />}
+
+                        {!nft.listed && <ListButton tokenId={nft.tokenId} />}
                       </div>
                     </div>
                   </div>
                 </div>
               ))}
+            </div>
+          )}
+
+          {status === 'error' && (
+            <div className=" ud-w-full ud-flex ud-flex-wrap">
+              <ErrorAlert msg="Try refreshing the page to load your NFTs." />
             </div>
           )}
         </div>
@@ -125,4 +136,4 @@ const MyNFT = ({ account }: any) => {
   );
 };
 
-export default MyNFT;
+export default NftList;

@@ -8,13 +8,11 @@ const PRICE = ethers.utils.parseEther('0.1');
 
 const main = async () => {
   let tokenContract = await connectNftContract(
-    process.env.SCRIPT_02_TOKEN_OWNER_ACCOUNT_MNEMONIC || '',
-    process.env.SCRIPT_02_NFT_CONTRACT_ADDRESS || ''
+    process.env.NFT_OWNER_ACCOUNT_MNEMONIC || '',
+    process.env.NFT_CONTRACT_ADDRESS || ''
   );
 
-  console.log(
-    `Minting NFT for ${process.env.SCRIPT_02_TOKEN_OWNER_ACCOUNT_ADDRESS}`
-  );
+  console.log(`Minting NFT`);
   const mintTx = await tokenContract.mint();
   const mintTxReceipt: any = await mintTx.wait();
   const tokenId = mintTxReceipt.events[0].args.tokenId;
@@ -22,15 +20,15 @@ const main = async () => {
 
   console.log('Approving Marketplace as operator of NFT...');
   const approveTx = await tokenContract.approve(
-    process.env.SCRIPT_02_MARKETPLACE_CONTRACT_ADDRESS || '',
+    process.env.MARKETPLACE_CONTRACT_ADDRESS || '',
     tokenId
   );
   await approveTx.wait();
 
   console.log('Listing NFT...');
   const marketContract = await connectMarketContract(
-    process.env.SCRIPT_02_TOKEN_OWNER_ACCOUNT_MNEMONIC || '',
-    process.env.SCRIPT_02_MARKETPLACE_CONTRACT_ADDRESS || ''
+    process.env.NFT_OWNER_ACCOUNT_MNEMONIC || '',
+    process.env.MARKETPLACE_CONTRACT_ADDRESS || ''
   );
   const listTx = await marketContract.listItem(
     tokenContract.address,

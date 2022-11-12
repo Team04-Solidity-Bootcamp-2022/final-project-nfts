@@ -4,7 +4,7 @@ const HeroSection = () => {
       id="home"
       className="ud-relative ud-z-10 ud-overflow-hidden ud-bg-cover ud-bg-top ud-bg-no-repeat ud-pt-[150px] ud-pb-24"
       style={{
-        backgroundImage: `linear-gradient(190deg, #fa7c30 30%, rgba(0, 0, 0, 0)30%), url('./images/hero/common-bg.jpg');`,
+        backgroundImage: `linear-gradient(190deg, #fa7c30 30%, rgba(0, 0, 0, 0)30%), url('./images/hero/common-bg.jpg')`,
       }}
     >
       <div
@@ -14,7 +14,7 @@ const HeroSection = () => {
           180deg,
           rgba(20, 20, 32, 0.65) 0%,
           #141420 100%
-        );`,
+        )`,
         }}
       ></div>
       <div className="ud-container">
