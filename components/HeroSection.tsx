@@ -14,7 +14,7 @@ const HeroSection = () => {
           180deg,
           rgba(20, 20, 32, 0.65) 0%,
           #141420 100%
-        );`,
+        )`,
         }}
       ></div>
       <div className="ud-container">

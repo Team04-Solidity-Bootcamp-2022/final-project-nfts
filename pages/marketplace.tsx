@@ -4,6 +4,7 @@ import { ThreeCircles } from 'react-loader-spinner';
 import generateName from '../utils/generateName';
 import generateSvg from '../utils/generateSvg';
 import { useAccount } from '@web3modal/react';
+import BuyButton from '../components/market/BuyButton';
 
 const fetchEvents = async () => {
   const response = await fetch(`/api/market-nft-list`);
@@ -184,9 +185,7 @@ export default function Marketplace() {
 
                       {account.address !== nft.seller && (
                         <div className="ud-flex ud-items-center ud-justify-between ud-border-t-2 ud-border-stroke ud-pt-5">
-                          <a className="ud-flex ud-items-center ud-justify-center ud-rounded-md ud-bg-primary ud-py-3 ud-px-4 ud-text-sm ud-font-semibold ud-text-white ud-transition-all hover:ud-bg-opacity-90 sm:ud-px-5">
-                            Buy
-                          </a>
+                          <BuyButton tokenId={nft.tokenId} price={nft.price} />
                           <a className="ud-flex ud-items-center ud-justify-center ud-rounded-md ud-py-3 ud-px-4 ud-text-sm ud-font-semibold ud-text-white hover:ud-text-primary sm:ud-px-5">
                             <span className="ud-pr-1">
                               <svg
@@ -219,6 +218,8 @@ export default function Marketplace() {
             </div>
           )}
         </div>
+
+        {status === 'error' && <>Sorry there was an error</>}
       </section>
     </>
   );

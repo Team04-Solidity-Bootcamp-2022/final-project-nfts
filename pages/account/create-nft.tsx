@@ -1,10 +1,7 @@
 import Header from '../../components/Header';
 import Link from 'next/link';
 import { useAccount } from '@web3modal/react';
-import MyAccount from '../../components/account/MyAccount';
 import CreateNFT from '../../components/account/CreateNFT';
-import NftList from '../../components/account/NftList';
-import { useState } from 'react';
 
 export default function Home() {
   const { account } = useAccount();
@@ -40,16 +37,14 @@ export default function Home() {
                 <span className="ud-px-3"> / </span>
               </li>
               <li className="ud-flex ud-items-center ud-text-base ud-font-medium ud-text-white">
-                <Link href="/account">Account</Link>
+                <Link href="/account/create-nft">Create NFT</Link>
               </li>
             </ul>
           </div>
         </div>
       </section>
 
-      <MyAccount />
-
-      <NftList account={account} />
+      <CreateNFT />
     </>
   );
 }

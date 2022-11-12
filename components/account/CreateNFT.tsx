@@ -1,19 +1,10 @@
 import { chains } from '@web3modal/ethereum';
-import {
-  useContractWrite,
-  useWaitForTransaction,
-  useAccount,
-} from '@web3modal/react';
+import { useContractWrite, useAccount } from '@web3modal/react';
 import nftABI from '../../data/nftABI.json';
-import {
-  uniqueNamesGenerator,
-  adjectives,
-  colors,
-  animals,
-} from 'unique-names-generator';
 import { generateFromString } from 'generate-avatar';
 import SuccessModal from '../SuccessModal';
 import { useState } from 'react';
+import ErrorAlert from '../ErrorAlert';
 
 const config = {
   address: process.env.NEXT_PUBLIC_NFT_CONTRACT_ADDRESS || '',
@@ -25,15 +16,18 @@ const config = {
 const CreateNFT = () => {
   const { account } = useAccount();
   const [newNft, setNewNft] = useState('');
-  const [newNftName, setNewNftName] = useState('');
   const { data, error, isLoading, write } = useContractWrite(config);
-  const { receipt, isWaiting } = useWaitForTransaction({ hash: data?.hash });
 
   if (data) {
     return (
       <section className="ud-pt-8 ud-pb-14 ud-mt-4">
         <div className="ud-container">
-          <SuccessModal></SuccessModal>
+          <SuccessModal
+            title="NFT Created!"
+            text="Give it some time to show up."
+            cta="Done"
+            url="/account"
+          ></SuccessModal>
         </div>
       </section>
     );
@@ -52,15 +46,8 @@ const CreateNFT = () => {
               const art = generateFromString(
                 `${account.address}${Math.random()}`
               );
-              const artName = uniqueNamesGenerator({
-                dictionaries: [adjectives, colors, animals],
-                separator: ' ',
-                style: 'capital',
-                seed: `${account.address}${Math.random()}`,
-              });
 
               setNewNft(art);
-              setNewNftName(artName);
             }}
             className="hover:ud-shadow-form ud-w-full ud-rounded-md ud-bg-primary ud-py-3 ud-px-8 ud-text-center ud-text-base ud-font-semibold ud-text-white ud-outline-none"
           >
@@ -98,45 +85,24 @@ const CreateNFT = () => {
                   </button>
                 </div>
                 <div>
-                  <h3>
-                    <a
-                      href="item-details.html"
-                      className="ud-mb-3 ud-inline-block ud-text-lg ud-font-semibold ud-text-white hover:ud-text-primary"
-                    >
-                      {newNftName}
-                    </a>
-                  </h3>
-
                   <div className="ud-flex ud-items-center ud-justify-between ud-border-t-2 ud-border-stroke ud-pt-5">
                     <button
                       onClick={async () => write()}
-                      className="ud-flex ud-items-center ud-justify-center ud-rounded-md ud-bg-primary ud-py-3 ud-px-4 ud-text-sm ud-font-semibold ud-text-white ud-transition-all hover:ud-bg-opacity-90 sm:ud-px-5"
+                      className="ud-flex ud-w-full ud-items-center ud-justify-center ud-rounded-md ud-bg-primary ud-py-3 ud-px-4 ud-text-sm ud-font-semibold ud-text-white ud-transition-all hover:ud-bg-opacity-90 sm:ud-px-5"
                       disabled={isLoading}
                     >
-                      Mint
+                      Mint / Create
                     </button>
                   </div>
                 </div>
               </div>
             </div>
+          </div>
+        )}
 
-            <div>
-              <ul>
-                <li>
-                  Write Data:{' '}
-                  <span>{isLoading ? 'Loading...' : JSON.stringify(data)}</span>
-                </li>
-                <li>
-                  Receipt Data:{' '}
-                  <span>
-                    {isWaiting ? 'Waiting...' : JSON.stringify(receipt)}
-                  </span>
-                </li>
-                <li>
-                  Error: <span>{error ? error.message : 'No Error'}</span>
-                </li>
-              </ul>
-            </div>
+        {error && (
+          <div className=" ud-w-full ud-flex ud-flex-wrap">
+            <ErrorAlert msg="We are experiencing technical issues creating NFT's. Try again later" />
           </div>
         )}
       </div>
