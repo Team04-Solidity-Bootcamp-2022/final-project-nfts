@@ -170,10 +170,12 @@ contract NftMarketplace is ReentrancyGuard, Ownable {
     require(s_swapPools[nftAddress].length > 1, "Not enough nfts to swap, try later");
     require(IERC721(nftAddress).ownerOf(tokenId) == msg.sender, "Not NFT owner");
 
-    uint256 rndIndex = getRandomNumber() % s_swapPools[nftAddress].length;
-    if(s_swapPools[nftAddress][rndIndex] == tokenId) {
+    uint128 rndIndex = uint128(getRandomNumber(block.number) % s_swapPools[nftAddress].length);
+    uint16 decrement = 1;
+    while(s_swapPools[nftAddress][rndIndex] == tokenId) {
       //FIXME
-      ++rndIndex;
+      rndIndex = uint128(getRandomNumber(block.number-decrement) % s_swapPools[nftAddress].length);
+      ++decrement;
     }
 
     uint256 tokenId1 = s_swapPools[nftAddress][rndIndex];
@@ -209,8 +211,8 @@ contract NftMarketplace is ReentrancyGuard, Ownable {
     );
   }
 
-  function getRandomNumber() public view returns (uint256 randomNumber) {
-        randomNumber = block.timestamp;
+  function getRandomNumber(uint256 blockNumber) public view returns (uint256 randomNumber) {
+        randomNumber = uint256(blockhash(blockNumber));
   }
 
   function buyItem(
