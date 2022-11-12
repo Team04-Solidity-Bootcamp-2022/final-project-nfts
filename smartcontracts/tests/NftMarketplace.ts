@@ -15,9 +15,14 @@ describe("NftMarketplace", async () => {
     let acc2: SignerWithAddress;
     let acc3: SignerWithAddress;
     let acc4: SignerWithAddress;
+    let owner1: SignerWithAddress;  // owner of NFT
+    let owner2: SignerWithAddress;  // owner 2 of NFT
+    let buyer1: SignerWithAddress;
+    let buyer2: SignerWithAddress;
+    let buyer3: SignerWithAddress;
 
     beforeEach(async () => {
-        [deployer, acc1, acc2, acc3, acc4] = await ethers.getSigners();
+        [deployer, acc1, acc2, acc3, acc4, owner1, owner2, buyer1, buyer2, buyer3] = await ethers.getSigners();
         const nftMarketplaceContractFactory = await ethers.getContractFactory("NftMarketplace");
         nftMarketplaceContract = await nftMarketplaceContractFactory.deploy();
         await nftMarketplaceContract.deployed();
@@ -127,7 +132,6 @@ describe("NftMarketplace", async () => {
                     const error = diff.sub(expectDiff);
                     expect(error).to.eq(0);
                 });
-
             });
         });
     });
@@ -269,9 +273,158 @@ describe("NftMarketplace", async () => {
             });
 
         });
-
-
     });
+    describe("Swap NFTs", async () => {
+        let myNFTContract: MyNFT;
+        const NFT_PRICE_WEI = ethers.utils.parseEther("0.1");
 
+        const LISTING_PRICE = ethers.utils.parseEther("0.1");
+        const LISTING_PRICE_TWO = ethers.utils.parseEther("0.2");
+        const LISTING_PRICE_THREE = ethers.utils.parseEther("0.3");
+        const LISTING_PRICE_x10 = ethers.utils.parseEther("1");
+        const LISTING_PRICE_TWO_x10 = ethers.utils.parseEther("2");
+        const LISTING_PRICE_THREE_x10 = ethers.utils.parseEther("3");
 
+        const tokenId = 0;
+        const token2Id = 1;
+        const token3Id = 2;
+
+        beforeEach(async () => {
+            const myNFTContractFactory = await ethers.getContractFactory("MyNFT");
+            myNFTContract = await myNFTContractFactory.deploy();
+            await myNFTContract.deployed();
+
+            const mintTx = await myNFTContract.safeMint(buyer1.address);
+            const mintTxReceipt = await mintTx.wait();
+            const approveTx = await myNFTContract.connect(buyer1).approve(nftMarketplaceContract.address, tokenId);
+            const approveTxReceipt = approveTx.wait();
+
+            const mint2Tx = await myNFTContract.safeMint(buyer2.address);
+            const mint2TxReceipt = await mint2Tx.wait();
+            const approve2Tx = await myNFTContract.connect(buyer2).approve(nftMarketplaceContract.address, token2Id);
+            const approve2TxReceipt = approve2Tx.wait();
+
+            const mint3Tx = await myNFTContract.safeMint(buyer3.address);
+            const mint3TxReceipt = await mint3Tx.wait();
+            const approve3Tx = await myNFTContract.connect(buyer3).approve(nftMarketplaceContract.address, token3Id);
+            const approve3TxReceipt = approve3Tx.wait();
+           
+        });
+
+        describe("After minting of NFTs", async () => {
+            beforeEach("Should let owners list NFT with correct price", async() => {
+                const newListingTx = await nftMarketplaceContract
+                    .connect(buyer1)
+                    .listItem(myNFTContract.address, tokenId, LISTING_PRICE_x10);
+                await newListingTx.wait();
+                const getItem = await nftMarketplaceContract.getListing(myNFTContract.address, tokenId);
+                expect(getItem.price).to.eq(LISTING_PRICE_x10);
+                expect(getItem.seller).to.eq(buyer1.address);
+
+                const newListing2Tx = await nftMarketplaceContract
+                    .connect(buyer2)
+                    .listItem(myNFTContract.address, token2Id, LISTING_PRICE_TWO_x10);
+                await newListing2Tx.wait();
+                const getItem2 = await nftMarketplaceContract.getListing(myNFTContract.address, token2Id);
+                expect(getItem2.price).to.eq(LISTING_PRICE_TWO_x10);
+                expect(getItem2.seller).to.eq(buyer2.address);
+
+                const newListing3Tx = await nftMarketplaceContract
+                    .connect(buyer3)
+                    .listItem(myNFTContract.address, token3Id, LISTING_PRICE_THREE_x10);
+                await newListing3Tx.wait();
+                const getItem3 = await nftMarketplaceContract.getListing(myNFTContract.address, token3Id);
+                expect(getItem3.price).to.eq(LISTING_PRICE_THREE_x10);
+                expect(getItem3.seller).to.eq(buyer3.address);
+            });
+
+            describe("Make swap offers", async() => {
+                it("Should let owners make swap offers for NFT 1", async () => {
+                    const swapOfferTx = await nftMarketplaceContract
+                        .connect(buyer2)
+                        .makeSwapOffer(myNFTContract.address, tokenId, myNFTContract.address, token2Id);
+                    await swapOfferTx.wait();
+
+                    const swapOffer2Tx = await nftMarketplaceContract
+                        .connect(buyer3)
+                        .makeSwapOffer(myNFTContract.address, tokenId, myNFTContract.address, token3Id);
+                    await swapOffer2Tx.wait();
+
+                    const getSwapOffersForNftTx = await nftMarketplaceContract.getSwapOffersForNft(
+                        myNFTContract.address, tokenId
+                    );
+
+                    expect(getSwapOffersForNftTx.length).to.eq(2);
+
+                    expect(getSwapOffersForNftTx[0].swapper).to.eq(buyer2.address);
+                    expect(getSwapOffersForNftTx[0].swapNftAddress).to.eq(myNFTContract.address);
+                    expect(getSwapOffersForNftTx[0].swapTokenId).to.eq(token2Id);
+
+                    expect(getSwapOffersForNftTx[1].swapper).to.eq(buyer3.address);
+                    expect(getSwapOffersForNftTx[1].swapNftAddress).to.eq(myNFTContract.address);
+                    expect(getSwapOffersForNftTx[1].swapTokenId).to.eq(token3Id);
+                });
+
+                it("Should let Buyer 1 approve a swap offer from Buyer 2", async () => {
+                    const swapOfferTx = await nftMarketplaceContract
+                        .connect(buyer2)
+                        .makeSwapOffer(myNFTContract.address, tokenId, myNFTContract.address, token2Id);
+                    await swapOfferTx.wait();
+
+                    const swapOffer2Tx = await nftMarketplaceContract
+                        .connect(buyer3)
+                        .makeSwapOffer(myNFTContract.address, tokenId, myNFTContract.address, token3Id);
+                    await swapOffer2Tx.wait();
+
+                    const approveSwapTx = await nftMarketplaceContract
+                        .connect(buyer1)
+                        .approveSwap(
+                            buyer2.address,
+                            myNFTContract.address,
+                            myNFTContract.address,
+                            tokenId,
+                            token2Id
+                        );
+                    await approveSwapTx.wait();
+
+                    const newOwnerNft1 = await myNFTContract.ownerOf(tokenId);
+                    const newOwnerNft2 = await myNFTContract.ownerOf(token2Id);
+                    expect(newOwnerNft1).to.eq(buyer2.address);
+                    expect(newOwnerNft2).to.eq(buyer1.address);
+                });
+
+                it("Should not let Buyer 1 approve a swap offer from Buyer 2 after cancelled swap offer", async () => {
+                    const swapOfferTx = await nftMarketplaceContract
+                        .connect(buyer2)
+                        .makeSwapOffer(myNFTContract.address, tokenId, myNFTContract.address, token2Id);
+                    await swapOfferTx.wait();
+
+                    const swapOffer2Tx = await nftMarketplaceContract
+                        .connect(buyer3)
+                        .makeSwapOffer(myNFTContract.address, tokenId, myNFTContract.address, token3Id);
+                    await swapOffer2Tx.wait();
+
+                    const cancelSwapTx = await nftMarketplaceContract
+                        .connect(buyer2)
+                        .cancelSwapOffer(
+                            myNFTContract.address,
+                            myNFTContract.address,
+                            tokenId,
+                            token2Id
+                        );
+                    await cancelSwapTx.wait()
+
+                    await expect(nftMarketplaceContract
+                        .connect(buyer1)
+                        .approveSwap(
+                            buyer2.address,
+                            myNFTContract.address,
+                            myNFTContract.address,
+                            tokenId,
+                            token2Id
+                        )).to.be.reverted;
+                });
+            });
+        });
+    });
 });
