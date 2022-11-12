@@ -117,7 +117,7 @@ contract NftMarketplace is ReentrancyGuard {
     _;
   }
 
-  // reverts if user has not pledged nft to a listing
+  // Returns false if the nft to be swapped is not pledged to a listing
   function isSwappable(
     address listingNftAddress,
     address swapNftAddress,
@@ -131,6 +131,7 @@ contract NftMarketplace is ReentrancyGuard {
       if(swapPledges[i].nftAddress == listingNftAddress && swapPledges[i].tokenId == listingTokenId) {
         isFound = true;
       }
+      i++;
     }
     return isFound;
   }
@@ -243,9 +244,11 @@ contract NftMarketplace is ReentrancyGuard {
   )
     external
     isOwner(swapNftAddress, swapTokenId, msg.sender)
-    isListed(swapNftAddress, swapTokenId)
     nonReentrant
+    isListed(swapNftAddress, swapTokenId)
   {
+    require(!isSwappable(listingNftAddress, swapNftAddress, listingTokenId, swapTokenId), "Swap offer already exists");
+
     IERC721 nft = IERC721(swapNftAddress);
     if (nft.getApproved(swapTokenId) != address(this)) {
       revert NotApprovedForMarketplace();
@@ -277,6 +280,43 @@ contract NftMarketplace is ReentrancyGuard {
     );
   }
 
+  function cancelSwapOffer(
+    address listingNftAddress,
+    uint256 listingTokenId,
+    address swapNftAddress,
+    uint256 swapTokenId
+  )
+    external    
+    nonReentrant
+    isOwner(swapNftAddress, swapTokenId, msg.sender)
+  {
+    require(isSwappable(listingNftAddress, swapNftAddress, listingTokenId, swapTokenId));
+    SwapPledge[] storage swapPledges = s_swapPledges[swapNftAddress][swapTokenId];
+    bool isFound = false;
+    uint256 i = 0;
+    while(!isFound && i < swapPledges.length) {
+      if(swapPledges[i].nftAddress == listingNftAddress && swapPledges[i].tokenId == listingTokenId) {
+        isFound = true;
+        swapPledges[i] = swapPledges[swapPledges.length - 1];
+        delete swapPledges[swapPledges.length - 1];
+        s_swapPledges[swapNftAddress][swapTokenId] = swapPledges;
+      }
+    }
+
+    Swap[] storage swapOffers = s_swapOffers[listingNftAddress][listingTokenId];
+    isFound = false;
+    i = 0;
+
+    while(!isFound && i < swapOffers.length) {
+      if(swapOffers[i].swapNftAddress == swapNftAddress && swapOffers[i].swapTokenId == swapTokenId) {
+        isFound = true;
+        swapOffers[i] = swapOffers[swapPledges.length - 1];
+        delete swapOffers[swapOffers.length - 1];
+        s_swapOffers[listingNftAddress][listingTokenId] = swapOffers;
+      }
+    }
+  }
+
   function getSwapOffersForNft(address nftAddress, uint256 tokenId) 
     external
     view
@@ -295,6 +335,35 @@ contract NftMarketplace is ReentrancyGuard {
     return s_swapPledges[nftAddress][tokenId];
   }
 
+  function cleanUpSwapOffers(address nftAddress, address swapNftAddress, uint256 tokenId, uint256 swapTokenId)
+    internal
+  {
+    SwapPledge[] storage swapPledges = s_swapPledges[swapNftAddress][swapTokenId];
+    bool isFound = false;
+    uint256 i = 0;
+    while(!isFound && i < swapPledges.length) {
+      if(swapPledges[i].nftAddress == nftAddress && swapPledges[i].tokenId == tokenId) {
+        isFound = true;
+        swapPledges[i] = swapPledges[swapPledges.length - 1];
+        delete swapPledges[swapPledges.length - 1];
+        s_swapPledges[swapNftAddress][swapTokenId] = swapPledges;
+      }
+    }
+
+    Swap[] storage swapOffers = s_swapOffers[nftAddress][tokenId];
+    isFound = false;
+    i = 0;
+
+    while(!isFound && i < swapOffers.length) {
+      if(swapOffers[i].swapNftAddress == swapNftAddress && swapOffers[i].swapTokenId == swapTokenId) {
+        isFound = true;
+        swapOffers[i] = swapOffers[swapPledges.length - 1];
+        delete swapOffers[swapOffers.length - 1];
+        s_swapOffers[nftAddress][tokenId] = swapOffers;
+      }
+    }
+  }
+
   function approveSwap(address swapper, address nftAddress, address swapNftAddress, uint256 tokenId, uint256 swapTokenId)
     external
     isOwner(nftAddress, tokenId, msg.sender)
@@ -304,25 +373,13 @@ contract NftMarketplace is ReentrancyGuard {
     // s_proceeds[listedItem.seller] += msg.value;
    
     require(isSwappable(nftAddress, swapNftAddress, tokenId, swapTokenId), "Cannot be swapped");
+    cleanUpSwapOffers(nftAddress, swapNftAddress, tokenId, swapTokenId);
     
     delete (s_listings[nftAddress][tokenId]);
     delete (s_listings[swapNftAddress][swapTokenId]);
 
-    // TODO: remove from s_swapPledges
-    
-    // console.log("Nft %s tokenId %s is approved to %s", swapNftAddress, swapTokenId, IERC721(swapNftAddress).getApproved(swapTokenId));
-    // console.log("Nft %s tokenId %s is approved to %s", nftAddress, tokenId, IERC721(nftAddress).getApproved(tokenId));
-
-
     IERC721(swapNftAddress).transferFrom(swapper, msg.sender, swapTokenId);
     IERC721(nftAddress).transferFrom(msg.sender, swapper, tokenId);
-
-    // delete swapOffers[i];
-    // s_swapOffers[nftAddress][tokenId] = swapOffers;
-    
-          
-    // emit ItemSwapped(msg.sender, swapOffers[i].swapper, nftAddress, swapNftAddress, tokenId, swapTokenId);
-    // }
 
   }
 }
