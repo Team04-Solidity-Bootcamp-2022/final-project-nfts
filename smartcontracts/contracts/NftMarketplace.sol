@@ -282,8 +282,8 @@ contract NftMarketplace is ReentrancyGuard {
 
   function cancelSwapOffer(
     address listingNftAddress,
-    uint256 listingTokenId,
     address swapNftAddress,
+    uint256 listingTokenId,
     uint256 swapTokenId
   )
     external    

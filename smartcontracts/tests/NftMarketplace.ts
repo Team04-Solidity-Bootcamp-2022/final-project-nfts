@@ -6,6 +6,7 @@ import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers"
 import { NftMarketplace, BasicNFT } from "../typechain-types";
 import { MyNFT } from "../typechain-types";
 import { BigNumber } from "ethers";
+import { token } from "../typechain-types/@openzeppelin/contracts";
 
 describe("NftMarketplace", async () => {
 
@@ -253,7 +254,38 @@ describe("NftMarketplace", async () => {
                     const newOwnerNft2 = await myNFTContract.ownerOf(token2Id);
                     expect(newOwnerNft1).to.eq(buyer2.address);
                     expect(newOwnerNft2).to.eq(buyer1.address);
+                });
 
+                it("Should not let Buyer 1 approve a swap offer from Buyer 2 after cancelled swap offer", async () => {
+                    const swapOfferTx = await nftMarketplaceContract
+                        .connect(buyer2)
+                        .makeSwapOffer(myNFTContract.address, tokenId, myNFTContract.address, token2Id);
+                    await swapOfferTx.wait();
+
+                    const swapOffer2Tx = await nftMarketplaceContract
+                        .connect(buyer3)
+                        .makeSwapOffer(myNFTContract.address, tokenId, myNFTContract.address, token3Id);
+                    await swapOffer2Tx.wait();
+
+                    const cancelSwapTx = await nftMarketplaceContract
+                        .connect(buyer2)
+                        .cancelSwapOffer(
+                            myNFTContract.address,
+                            myNFTContract.address,
+                            tokenId,
+                            token2Id
+                        );
+                    await cancelSwapTx.wait()
+
+                    await expect(nftMarketplaceContract
+                        .connect(buyer1)
+                        .approveSwap(
+                            buyer2.address,
+                            myNFTContract.address,
+                            myNFTContract.address,
+                            tokenId,
+                            token2Id
+                        )).to.be.reverted;
                 });
             });
         });
