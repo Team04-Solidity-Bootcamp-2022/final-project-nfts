@@ -5,7 +5,7 @@ import { ethers } from 'ethers';
 
 const PRICE = ethers.utils.parseEther('0.1');
 
-export default function ListNFT({ tokenId }: any) {
+export default function ListButton({ tokenId }: any) {
   const nftContractAddress = process.env.NEXT_PUBLIC_NFT_CONTRACT_ADDRESS || '';
   const marketContractAddress =
     process.env.NEXT_PUBLIC_MARKETPLACE_CONTRACT_ADDRESS || '';
@@ -42,7 +42,7 @@ export default function ListNFT({ tokenId }: any) {
               />
             </svg>
           </span>
-          {!isLoading && !isWaiting && !data && 'List'}
+          {!isLoading && !isWaiting && !data && !error && 'List in Market'}
           {isLoading && 'Loading...'}
           {isWaiting && 'Waiting...'}
         </button>

@@ -1,14 +1,16 @@
 import { useQuery } from 'react-query';
 import { ThreeCircles } from 'react-loader-spinner';
-import ApproveNFT from './ApproveNFT';
-import ListNFT from './ListNFT';
+import ApproveButton from './ApproveButton';
+import ListButton from './ListButton';
+import generateName from '../../utils/generateName';
+import generateSvg from '../../utils/generateSvg';
 
 const fetchEvents = async (address: any) => {
-  const response = await fetch(`/api/mynft?address=${address}`);
+  const response = await fetch(`/api/account-nft-list?address=${address}`);
   return response.json();
 };
 
-const MyNFT = ({ account, contract }: any) => {
+const NftList = ({ account }: any) => {
   const { data, status } = useQuery(['myNFT', account.address], () =>
     fetchEvents(account.address)
   );
@@ -48,7 +50,7 @@ const MyNFT = ({ account, contract }: any) => {
                   <div className="ud-mb-10 ud-rounded-xl ud-border ud-border-stroke ud-bg-bg-color ud-p-[18px]">
                     <div className="ud-relative ud-mb-5 ud-overflow-hidden ud-rounded-lg">
                       <img
-                        src={`data:image/svg+xml;utf8,${nft.image}`}
+                        src={`data:image/svg+xml;utf8,${generateSvg(nft.id)}`}
                         alt="auctions"
                         className="ud-w-full"
                       />
@@ -77,7 +79,7 @@ const MyNFT = ({ account, contract }: any) => {
                           href="item-details.html"
                           className="ud-mb-3 ud-inline-block ud-text-lg ud-font-semibold ud-text-white hover:ud-text-primary"
                         >
-                          {nft.name}
+                          {generateName(nft.tokenId)}
                         </a>
                       </h3>
                       <div className="ud-mb-6 ud-flex ud-items-center ud-justify-between">
@@ -111,9 +113,9 @@ const MyNFT = ({ account, contract }: any) => {
                       </div>
 
                       <div className="ud-flex ud-items-center ud-justify-between ud-border-t-2 ud-border-stroke ud-pt-5">
-                        {!nft.listed && <ApproveNFT tokenId={nft.tokenId} />}
+                        {!nft.listed && <ApproveButton tokenId={nft.tokenId} />}
 
-                        {!nft.listed && <ListNFT tokenId={nft.tokenId} />}
+                        {!nft.listed && <ListButton tokenId={nft.tokenId} />}
                       </div>
                     </div>
                   </div>
@@ -127,4 +129,4 @@ const MyNFT = ({ account, contract }: any) => {
   );
 };
 
-export default MyNFT;
+export default NftList;
