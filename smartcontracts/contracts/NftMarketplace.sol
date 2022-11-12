@@ -22,6 +22,11 @@ contract NftMarketplace is ReentrancyGuard, Ownable {
     address seller;
   }
 
+  struct SwapListing {
+    uint256 index;
+    address swapper;
+  }
+
   event ItemListed(
     address indexed seller,
     address indexed nftAddress,
@@ -60,7 +65,7 @@ contract NftMarketplace is ReentrancyGuard, Ownable {
   mapping(address => mapping(uint256 => Listing)) private s_listings;
   mapping(address => uint256) private s_proceeds;
   mapping(address => uint256[]) private s_swapPools;
-  mapping(address => mapping(uint256 => address)) private s_swapListings;
+  mapping(address => mapping(uint256 => SwapListing)) private s_swapListings;
 
   // Function modifiers
   modifier notListed(
@@ -102,7 +107,7 @@ contract NftMarketplace is ReentrancyGuard, Ownable {
     address nftAddress,
     uint256 tokenId
   ) {
-    address swapper = s_swapListings[nftAddress][tokenId];
+    address swapper = s_swapListings[nftAddress][tokenId].swapper;
     if (swapper == address(0)) {
       revert NotInSwapPool(nftAddress, tokenId);
     }
@@ -113,7 +118,7 @@ contract NftMarketplace is ReentrancyGuard, Ownable {
     address nftAddress,
     uint256 tokenId
   ) {
-    if (s_swapListings[nftAddress][tokenId] != address(0)) {
+    if (s_swapListings[nftAddress][tokenId].swapper != address(0)) {
       revert AlreadyInSwapPool(nftAddress, tokenId);
     }
     _;
@@ -128,7 +133,7 @@ contract NftMarketplace is ReentrancyGuard, Ownable {
     notListed (nftAddress, tokenId, msg.sender)
     isOwner(nftAddress, tokenId, msg.sender)
   {
-    require(s_swapListings[nftAddress][tokenId] == address(0), "Already on swap pool");
+    require(s_swapListings[nftAddress][tokenId].swapper == address(0), "Already on swap pool");
     if (price <= 0) {
       revert PriceMustBeAboveZero();
     }
@@ -146,16 +151,16 @@ contract NftMarketplace is ReentrancyGuard, Ownable {
     uint256 tokenId
   )
     external
-    notListed (nftAddress, tokenId, msg.sender)
     notInSwapPool(nftAddress, tokenId)
     isOwner(nftAddress, tokenId, msg.sender)
   {
+    require(s_listings[nftAddress][tokenId].price <= 0, "Already listed");
     if (IERC721(nftAddress).getApproved(tokenId) != address(this)) {
       revert NotApprovedForMarketplace();
     }
 
     
-    s_swapListings[nftAddress][tokenId] = msg.sender;
+    s_swapListings[nftAddress][tokenId] = SwapListing(s_swapPools[nftAddress].length, msg.sender);
     s_swapPools[nftAddress].push(tokenId);
     emit ItemAddedToSwapPool(msg.sender, nftAddress, tokenId);
   }
@@ -170,41 +175,38 @@ contract NftMarketplace is ReentrancyGuard, Ownable {
     require(s_swapPools[nftAddress].length > 1, "Not enough nfts to swap, try later");
     require(IERC721(nftAddress).ownerOf(tokenId) == msg.sender, "Not NFT owner");
 
-    uint128 rndIndex = uint128(getRandomNumber(block.number) % s_swapPools[nftAddress].length);
+    uint256 rndIndex = getRandomNumber(block.number) % s_swapPools[nftAddress].length;
     uint16 decrement = 1;
     while(s_swapPools[nftAddress][rndIndex] == tokenId) {
       //FIXME
-      rndIndex = uint128(getRandomNumber(block.number-decrement) % s_swapPools[nftAddress].length);
+      rndIndex = getRandomNumber(block.number-decrement) % s_swapPools[nftAddress].length;
       ++decrement;
     }
 
     uint256 tokenId1 = s_swapPools[nftAddress][rndIndex];
     IERC721(nftAddress).safeTransferFrom(
-      s_swapListings[nftAddress][tokenId1],
+      s_swapListings[nftAddress][tokenId1].swapper,
       msg.sender,
       tokenId1
     );
     IERC721(nftAddress).safeTransferFrom(
       msg.sender,
-      s_swapListings[nftAddress][tokenId1],
+      s_swapListings[nftAddress][tokenId1].swapper,
       tokenId
     );
 
-    delete s_swapListings[nftAddress][tokenId];
+  
     delete s_swapListings[nftAddress][tokenId1];
-
     remove(nftAddress, rndIndex);
 
-    //FIXME
-    for(uint256 i = 0; i < s_swapPools[nftAddress].length; ++i) {
-      if(s_swapPools[nftAddress][i] == tokenId) {
-        remove(nftAddress, i);
-      }
+    unchecked {
+      remove(nftAddress, s_swapListings[nftAddress][tokenId].index);
     }
+    delete s_swapListings[nftAddress][tokenId];
 
     emit Swapped(
       msg.sender,
-      s_swapListings[nftAddress][tokenId1],
+      s_swapListings[nftAddress][tokenId1].swapper,
       nftAddress,
       tokenId,
       tokenId1
@@ -290,7 +292,7 @@ contract NftMarketplace is ReentrancyGuard, Ownable {
   function getSwapPoolListing(address nftAddress, uint256 tokenId)
     external
     view
-    returns (address)
+    returns (SwapListing memory)
   {
     return s_swapListings[nftAddress][tokenId];
   }

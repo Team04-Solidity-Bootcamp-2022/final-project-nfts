@@ -158,7 +158,7 @@ describe("NftMarketplace", async () => {
 
             const getSwapPool = await nftMarketplaceContract.getSwapPool(myNFTContract.address);
 
-            expect(getSwapPoolItem).to.eq(acc1.address);
+            expect(getSwapPoolItem.swapper).to.eq(acc1.address);
             expect(getSwapPool.length).to.eq(1);
         });
         describe("After 1st listing", async () => {
@@ -193,7 +193,7 @@ describe("NftMarketplace", async () => {
     
                 const getSwapPool = await nftMarketplaceContract.getSwapPool(myNFTContract.address);
     
-                expect(getSwapPoolItem).to.eq(acc2.address);
+                expect(getSwapPoolItem.swapper).to.eq(acc2.address);
                 expect(getSwapPool.length).to.eq(2);
             });
 
@@ -222,8 +222,8 @@ describe("NftMarketplace", async () => {
     
                 const getSwapPool = await nftMarketplaceContract.getSwapPool(myNFTContract.address);
 
-                expect(getSwapPoolItem0).to.eq(ethers.constants.AddressZero);
-                expect(getSwapPoolItem1).to.eq(ethers.constants.AddressZero);
+                expect(getSwapPoolItem0.swapper).to.eq(ethers.constants.AddressZero);
+                expect(getSwapPoolItem1.swapper).to.eq(ethers.constants.AddressZero);
                 expect(getSwapPool.length).to.eq(0);
 
             });
@@ -263,7 +263,7 @@ describe("NftMarketplace", async () => {
     
                 const getSwapPool = await nftMarketplaceContract.getSwapPool(myNFTContract.address);
 
-                expect(getSwapPoolItem1).to.eq(ethers.constants.AddressZero);
+                expect(getSwapPoolItem1.swapper).to.eq(ethers.constants.AddressZero);
                 expect(getSwapPool.length).to.eq(1);
 
             });
