@@ -2,7 +2,7 @@ import { useQuery } from 'react-query';
 import { ThreeCircles } from 'react-loader-spinner';
 import ApproveButton from './ApproveButton';
 import ListButton from './ListButton';
-import generateName from '../../utils/generateName';
+import { generateName, generateUserName } from '../../utils/generateName';
 import generateSvg from '../../utils/generateSvg';
 import ErrorAlert from '../ErrorAlert';
 
@@ -95,7 +95,7 @@ const NftList = ({ account }: any) => {
                             </div>
                             <div className="ud-w-full">
                               <h4 className="ud-text-xs ud-font-semibold ud-text-white">
-                                @Devid_Mill...
+                                @{generateUserName(account.address)}
                                 <span className="ud-block ud-text-xs ud-font-medium ud-text-body-color">
                                   creator
                                 </span>
@@ -107,7 +107,7 @@ const NftList = ({ account }: any) => {
                           <h5 className="ud-text-right ud-text-xs ud-font-semibold ud-text-white">
                             {nft.price} ETH
                             <span className="ud-block ud-text-xs ud-font-medium ud-text-body-color">
-                              Current Bit
+                              Token Id {nft.tokenId}
                             </span>
                           </h5>
                         </div>

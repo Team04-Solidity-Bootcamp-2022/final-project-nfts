@@ -1,10 +1,11 @@
 import Header from '../components/Header';
 import { useQuery } from 'react-query';
 import { ThreeCircles } from 'react-loader-spinner';
-import generateName from '../utils/generateName';
+import { generateName, generateUserName } from '../utils/generateName';
 import generateSvg from '../utils/generateSvg';
 import { useAccount } from '@web3modal/react';
 import BuyButton from '../components/market/BuyButton';
+import ErrorAlert from '../components/ErrorAlert';
 
 const fetchEvents = async () => {
   const response = await fetch(`/api/market-nft-list`);
@@ -89,7 +90,7 @@ export default function Marketplace() {
           </div>
 
           {status === 'error' && (
-            <h1 className="ud-text-center">Error fetching data</h1>
+            <ErrorAlert msg="Sorry there was an error fetching data. Please try again later." />
           )}
 
           {status === 'loading' && (
@@ -165,7 +166,7 @@ export default function Marketplace() {
                             </div>
                             <div className="ud-w-full">
                               <h4 className="ud-text-xs ud-font-semibold ud-text-white">
-                                @Devid_Mill...
+                                @{generateUserName(nft.seller)}
                                 <span className="ud-block ud-text-xs ud-font-medium ud-text-body-color">
                                   creator
                                 </span>
@@ -218,8 +219,6 @@ export default function Marketplace() {
             </div>
           )}
         </div>
-
-        {status === 'error' && <>Sorry there was an error</>}
       </section>
     </>
   );
