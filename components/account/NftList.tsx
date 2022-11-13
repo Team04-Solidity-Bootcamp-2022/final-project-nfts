@@ -51,7 +51,9 @@ const NftList = ({ account }: any) => {
                   <div className="ud-mb-10 ud-rounded-xl ud-border ud-border-stroke ud-bg-bg-color ud-p-[18px]">
                     <div className="ud-relative ud-mb-5 ud-overflow-hidden ud-rounded-lg">
                       <img
-                        src={`data:image/svg+xml;utf8,${generateSvg(nft.id)}`}
+                        src={`data:image/svg+xml;utf8,${generateSvg(
+                          nft.tokenId
+                        )}`}
                         alt="auctions"
                         className="ud-w-full"
                       />
