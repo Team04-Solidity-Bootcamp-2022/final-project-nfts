@@ -3,6 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import marketABI from '../../data/marketABI.json';
 import nftABI from '../../data/nftABI.json';
 import { getSigner, getContract } from '../../utils/contract';
+import { ethers } from 'ethers';
 
 type Data = {
   nftAddress: any;
@@ -40,21 +41,23 @@ export default async function handler(
     tokens.push(tokenId.toNumber());
   }
 
-  const nfts = await Promise.all(
-    tokens.map(async (tokenId) => {
-      const listing = await marketContract.getListing(address, tokenId);
-      const isListed =
-        '0x0000000000000000000000000000000000000000' !== listing.seller;
+  const userTokens: any = [];
+  for (let tokenId of tokens) {
+    const listing = await marketContract.getListing(
+      nftContractAddress,
+      tokenId
+    );
+    const isListed =
+      listing.seller !== '0x0000000000000000000000000000000000000000';
 
-      return {
-        nftAddress: nftContractAddress,
-        seller: address,
-        tokenId: tokenId,
-        price: listing.price.toNumber(),
-        listed: isListed,
-      };
-    })
-  );
+    userTokens.push({
+      nftAddress: nftContractAddress,
+      seller: address,
+      tokenId: tokenId,
+      price: ethers.utils.formatEther(listing.price),
+      listed: isListed,
+    });
+  }
 
-  res.status(200).json(nfts);
+  res.status(200).json(userTokens);
 }

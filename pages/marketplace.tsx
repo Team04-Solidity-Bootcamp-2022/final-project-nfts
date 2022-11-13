@@ -208,7 +208,7 @@ export default function Marketplace() {
                       )}
 
                       {account.address === nft.seller && (
-                        <div className="ud-flex ud-items-center ud-justify-center ud-rounded-md ud-bg-secondary ud-py-3 ud-px-4 ud-text-sm ud-font-semibold ud-text-white ud-transition-all hover:ud-bg-opacity-90 sm:ud-px-5">
+                        <div className="ud-flex ud-items-center ud-justify-center ud-rounded-md ud-bg-dark ud-py-3 ud-px-4 ud-text-sm ud-font-semibold ud-text-white ud-transition-all hover:ud-bg-opacity-90 sm:ud-px-5">
                           OWNED
                         </div>
                       )}
