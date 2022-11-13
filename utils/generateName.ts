@@ -3,6 +3,7 @@ import {
   adjectives,
   colors,
   animals,
+  names,
 } from 'unique-names-generator';
 
 const generateName = (key: string) => {
@@ -14,4 +15,13 @@ const generateName = (key: string) => {
   });
 };
 
-export default generateName;
+const generateUserName = (key: string) => {
+  return uniqueNamesGenerator({
+    dictionaries: [names],
+    separator: '_',
+    style: 'capital',
+    seed: `${key}`,
+  });
+};
+
+export { generateName, generateUserName };
