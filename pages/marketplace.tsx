@@ -177,7 +177,7 @@ export default function Marketplace() {
                           <h5 className="ud-text-right ud-text-xs ud-font-semibold ud-text-white">
                             {nft.price} ETH
                             <span className="ud-block ud-text-xs ud-font-medium ud-text-body-color">
-                              Current Bit
+                              Token Id {nft.tokenId}
                             </span>
                           </h5>
                         </div>
