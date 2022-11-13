@@ -14,7 +14,6 @@ const BuyButton = ({ tokenId, price }: any) => {
     args: [process.env.NEXT_PUBLIC_NFT_CONTRACT_ADDRESS, tokenId, price],
   };
   const { data, error, isLoading, write } = useContractWrite(config);
-  console.log(config);
 
   return (
     <>
