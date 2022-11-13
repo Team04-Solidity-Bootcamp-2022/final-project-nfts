@@ -26,7 +26,6 @@ const CreateNFT = () => {
             title="NFT Created!"
             text="Give it some time to show up."
             cta="Done"
-            url="/account"
           ></SuccessModal>
         </div>
       </section>

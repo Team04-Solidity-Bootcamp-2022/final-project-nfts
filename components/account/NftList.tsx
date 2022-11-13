@@ -119,6 +119,11 @@ const NftList = ({ account }: any) => {
                         {!nft.listed && <ApproveButton tokenId={nft.tokenId} />}
 
                         {!nft.listed && <ListButton tokenId={nft.tokenId} />}
+                        {nft.listed && (
+                          <button className="ud-flex ud-cursor-default ud-w-full ud-items-center ud-justify-center ud-rounded-md ud-bg-dark ud-py-3 ud-px-4 ud-text-sm ud-font-semibold ud-text-white ud-transition-all hover:ud-bg-opacity-90 sm:ud-px-5">
+                            LISTED
+                          </button>
+                        )}
                       </div>
                     </div>
                   </div>

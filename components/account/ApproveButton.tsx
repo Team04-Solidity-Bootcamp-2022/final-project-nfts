@@ -1,6 +1,8 @@
 import { chains } from '@web3modal/ethereum';
 import { useContractWrite, useWaitForTransaction } from '@web3modal/react';
 import nftABI from '../../data/nftABI.json';
+import SuccessModal from '../SuccessModal';
+import ErrorModal from '../ErrorModal';
 
 export default function ApproveButton({ tokenId }: any) {
   const nftContractAddress = process.env.NEXT_PUBLIC_NFT_CONTRACT_ADDRESS || '';
@@ -31,9 +33,21 @@ export default function ApproveButton({ tokenId }: any) {
         </button>
       )}
 
-      {data && 'Approved'}
+      {data && (
+        <SuccessModal
+          title="NFT Approved"
+          text={`You have successfully approved an NFT ${tokenId}! Make sure to add to market.`}
+          cta="Done"
+        />
+      )}
 
-      {error && 'Error'}
+      {error && (
+        <ErrorModal
+          title="Sorry there was an error!"
+          text="Please try again later"
+          cta="Back"
+        />
+      )}
     </>
   );
 }

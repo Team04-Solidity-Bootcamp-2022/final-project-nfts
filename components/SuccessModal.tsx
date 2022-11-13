@@ -3,7 +3,7 @@ import { Dialog, Transition } from '@headlessui/react';
 import { CheckIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/router';
 
-export default function SuccessModal({ title, text, cta, url }: any) {
+export default function SuccessModal({ title, text, cta }: any) {
   const [open, setOpen] = useState(true);
   const router = useRouter();
 
@@ -14,7 +14,7 @@ export default function SuccessModal({ title, text, cta, url }: any) {
         className="ud-relative ud-z-10"
         onClose={() => {
           setOpen(false);
-          router.push(url);
+          router.reload();
         }}
       >
         <Transition.Child
@@ -66,7 +66,7 @@ export default function SuccessModal({ title, text, cta, url }: any) {
                     className="ud-inline-flex ud-w-full ud-justify-center ud-rounded-md ud-border ud-border-transparent ud-bg-indigo-600 ud-px-4 ud-py-2 ud-text-base ud-font-medium ud-text-white ud-shadow-sm ud-hover:bg-indigo-700 ud-focus:outline-none ud-focus:ring-2 ud-focus:ring-indigo-500 ud-focus:ring-offset-2 ud-sm:text-sm"
                     onClick={() => {
                       setOpen(false);
-                      router.push(url);
+                      router.reload();
                     }}
                   >
                     {cta}

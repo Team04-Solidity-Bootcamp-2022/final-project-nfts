@@ -3,7 +3,7 @@ import { Dialog, Transition } from '@headlessui/react';
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/router';
 
-export default function ErrorModal({ title, text, cta, url }: any) {
+export default function ErrorModal({ title, text, cta }: any) {
   const [open, setOpen] = useState(true);
   const router = useRouter();
   const cancelButtonRef = useRef(null);
@@ -16,7 +16,7 @@ export default function ErrorModal({ title, text, cta, url }: any) {
         initialFocus={cancelButtonRef}
         onClose={() => {
           setOpen(false);
-          location.reload();
+          router.reload();
         }}
       >
         <Transition.Child
@@ -68,7 +68,7 @@ export default function ErrorModal({ title, text, cta, url }: any) {
                     className="ud-inline-flex ud-w-full ud-justify-center ud-rounded-md ud-border ud-border-transparent ud-bg-red-600 ud-px-4 ud-py-2 ud-text-base ud-font-medium ud-text-white ud-shadow-sm ud-hover:bg-red-700 ud-focus:outline-none ud-focus:ring-2 ud-focus:ring-red-500 ud-focus:ring-offset-2 ud-sm:ml-3 ud-sm:w-auto ud-sm:text-sm"
                     onClick={() => {
                       setOpen(false);
-                      location.reload();
+                      router.reload();
                     }}
                   >
                     {cta}

@@ -2,6 +2,8 @@ import { chains } from '@web3modal/ethereum';
 import { useContractWrite, useWaitForTransaction } from '@web3modal/react';
 import marketABI from '../../data/marketABI.json';
 import { ethers } from 'ethers';
+import SuccessModal from '../SuccessModal';
+import ErrorModal from '../ErrorModal';
 
 const PRICE = ethers.utils.parseEther('0.1');
 
@@ -48,9 +50,21 @@ export default function ListButton({ tokenId }: any) {
         </button>
       )}
 
-      {data && 'Listed'}
+      {data && (
+        <SuccessModal
+          title="NFT Listed"
+          text={`You have successfully listed NFT ${tokenId}!`}
+          cta="Done"
+        />
+      )}
 
-      {error && 'Error'}
+      {error && (
+        <ErrorModal
+          title="Sorry there was an error!"
+          text="Please try again later"
+          cta="Back"
+        />
+      )}
     </>
   );
 }

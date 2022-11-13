@@ -4,6 +4,9 @@ import ErrorModal from '../ErrorModal';
 import marketABI from '../../data/marketABI.json';
 import { chains } from '@web3modal/ethereum';
 import { useContractWrite } from '@web3modal/react';
+import { ethers } from 'ethers';
+
+const PRICE = ethers.utils.parseEther('0.1');
 
 const BuyButton = ({ tokenId, price }: any) => {
   const config = {
@@ -11,7 +14,13 @@ const BuyButton = ({ tokenId, price }: any) => {
     abi: marketABI.abi,
     functionName: 'buyItem',
     chainId: chains.goerli.id,
-    args: [process.env.NEXT_PUBLIC_NFT_CONTRACT_ADDRESS, tokenId, price],
+    args: [
+      process.env.NEXT_PUBLIC_NFT_CONTRACT_ADDRESS,
+      tokenId,
+      {
+        value: PRICE,
+      },
+    ],
   };
   const { data, error, isLoading, write } = useContractWrite(config);
 
@@ -30,9 +39,8 @@ const BuyButton = ({ tokenId, price }: any) => {
       {data && (
         <SuccessModal
           title="NFT Purchased"
-          text="You have successfully bought an NFT! It will shortly display in your account"
-          cta="To my account"
-          url="/account"
+          text={`You have successfully bought an NFT ${tokenId}!`}
+          cta="Done"
         />
       )}
 
@@ -41,7 +49,6 @@ const BuyButton = ({ tokenId, price }: any) => {
           title="Sorry there was an error"
           text="We cannot process your request at the moment. Please try again later"
           cta="Back"
-          url="/marketplace"
         />
       )}
     </>
