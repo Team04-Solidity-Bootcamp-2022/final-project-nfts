@@ -90,7 +90,7 @@ export default function Marketplace() {
           </div>
 
           {status === 'error' && (
-            <ErrorAlert msg="Sorry there was an error fetching data. Please try again later." />
+            <ErrorAlert msg="There was an error fetching data. Try again later." />
           )}
 
           {status === 'loading' && (
