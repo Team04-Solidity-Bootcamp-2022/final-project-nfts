@@ -4,7 +4,7 @@ import { ethers } from 'ethers';
 import * as dotenv from 'dotenv';
 dotenv.config();
 
-const PRICE = ethers.utils.parseEther('0.1');
+const PRICE = ethers.utils.parseEther('0.05');
 
 const main = async () => {
   let tokenContract = await connectNftContract(

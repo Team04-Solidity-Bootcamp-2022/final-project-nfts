@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 const HeroSection = () => {
   return (
     <section
@@ -34,12 +36,18 @@ const HeroSection = () => {
                 sunt in culpa qui officia deserunt mollit anim id est laborum.
               </p>
               <div className="flex flex-wrap items-center">
-                <a className="ud-mr-5 ud-mb-5 ud-inline-flex ud-items-center ud-justify-center ud-rounded-md ud-border-2 ud-border-primary ud-bg-primary ud-py-3 ud-px-7 ud-text-base ud-font-semibold ud-text-white ud-transition-all hover:ud-bg-opacity-90">
+                <Link
+                  href="/marketplace"
+                  className="ud-mr-5 ud-mb-5 ud-inline-flex ud-items-center ud-justify-center ud-rounded-md ud-border-2 ud-border-primary ud-bg-primary ud-py-3 ud-px-7 ud-text-base ud-font-semibold ud-text-white ud-transition-all hover:ud-bg-opacity-90"
+                >
                   Swap now!
-                </a>
-                <a className="ud-mb-5 ud-inline-flex ud-items-center ud-justify-center ud-rounded-md ud-border-2 ud-border-white ud-py-3 ud-px-7 ud-text-base ud-font-semibold ud-text-white ud-transition-all hover:ud-border-primary hover:ud-bg-primary">
+                </Link>
+                <Link
+                  href="/marketplace"
+                  className="ud-mb-5 ud-inline-flex ud-items-center ud-justify-center ud-rounded-md ud-border-2 ud-border-white ud-py-3 ud-px-7 ud-text-base ud-font-semibold ud-text-white ud-transition-all hover:ud-border-primary hover:ud-bg-primary"
+                >
                   Buy NFT's
-                </a>
+                </Link>
               </div>
             </div>
           </div>

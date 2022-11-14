@@ -6,7 +6,7 @@ import { chains } from '@web3modal/ethereum';
 import SuccessModal from '../../SuccessModal';
 import ErrorModal from '../../ErrorModal';
 
-const ButtonWithdraw = ({ refetch }: any) => {
+const ButtonWithdraw = () => {
   const marketContractAddress =
     process.env.NEXT_PUBLIC_MARKETPLACE_CONTRACT_ADDRESS || '';
 
@@ -20,15 +20,12 @@ const ButtonWithdraw = ({ refetch }: any) => {
   const { data, error, isLoading, write } = useContractWrite(config);
   const { isWaiting } = useWaitForTransaction({ hash: data?.hash });
 
-  if (data) {
-    refetch();
-  }
-
   return (
     <>
       {!data && (
         <div className="pt-2">
           <button
+            disabled={isLoading}
             onClick={async () => write()}
             className="hover:ud-shadow-form ud-w-full ud-rounded-md ud-bg-secondary ud-py-3 ud-px-8 ud-text-center ud-text-base ud-font-semibold ud-text-white ud-outline-none"
           >

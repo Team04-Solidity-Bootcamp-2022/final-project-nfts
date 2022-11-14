@@ -5,7 +5,7 @@ import { ethers } from 'ethers';
 import SuccessModal from '../../SuccessModal';
 import ErrorModal from '../../ErrorModal';
 
-const PRICE = ethers.utils.parseEther('0.1');
+const PRICE = ethers.utils.parseEther('0.05');
 
 export default function ButtonList({ tokenId }: any) {
   const nftContractAddress = process.env.NEXT_PUBLIC_NFT_CONTRACT_ADDRESS || '';
