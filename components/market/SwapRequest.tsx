@@ -20,7 +20,7 @@ const SwapRequest = ({ account, pageToken }: any) => {
   return (
     <>
       <h2 className="ud-mb-3 ud-py-5 ud-text-3xl ud-font-bold ud-text-white sm:ud-mb-0 sm:ud-text-[28px] lg:ud-text-2xl xl:ud-text-[28px]">
-        Swap Requests
+        Swap Request
       </h2>
 
       {status === 'loading' && (

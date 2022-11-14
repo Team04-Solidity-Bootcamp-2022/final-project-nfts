@@ -4,7 +4,6 @@ import { ThreeCircles } from 'react-loader-spinner';
 import { generateName, generateUserName } from '../utils/generateName';
 import generateSvg from '../utils/generateSvg';
 import { useAccount } from '@web3modal/react';
-import BuyButton from '../components/market/BuyButton';
 import ErrorAlert from '../components/ErrorAlert';
 import Link from 'next/link';
 
