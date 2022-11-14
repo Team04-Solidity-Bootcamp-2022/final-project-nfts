@@ -2,6 +2,7 @@ import { useQuery } from 'react-query';
 import { ThreeCircles } from 'react-loader-spinner';
 import ButtonApprove from './buttons/ButtonApprove';
 import ButtonList from './buttons/ButtonList';
+import ButtonSwapList from './buttons/ButtonSwapList';
 import { generateName, generateUserName } from '../../utils/generateName';
 import generateSvg from '../../utils/generateSvg';
 import ErrorAlert from '../ErrorAlert';
@@ -125,6 +126,12 @@ const NftList = ({ account }: any) => {
                           </button>
                         )}
                       </div>
+
+                      {nft.listed && (
+                        <div className="ud-flex ud-items-center ud-justify-between ud-border-t-2 ud-border-stroke ud-pt-5">
+                          <ButtonSwapList tokenId={nft.tokenId} />
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
