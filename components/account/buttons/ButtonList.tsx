@@ -1,13 +1,13 @@
 import { chains } from '@web3modal/ethereum';
 import { useContractWrite, useWaitForTransaction } from '@web3modal/react';
-import marketABI from '../../data/marketABI.json';
+import marketABI from '../../../data/marketABI.json';
 import { ethers } from 'ethers';
-import SuccessModal from '../SuccessModal';
-import ErrorModal from '../ErrorModal';
+import SuccessModal from '../../SuccessModal';
+import ErrorModal from '../../ErrorModal';
 
 const PRICE = ethers.utils.parseEther('0.1');
 
-export default function ListButton({ tokenId }: any) {
+export default function ButtonList({ tokenId }: any) {
   const nftContractAddress = process.env.NEXT_PUBLIC_NFT_CONTRACT_ADDRESS || '';
   const marketContractAddress =
     process.env.NEXT_PUBLIC_MARKETPLACE_CONTRACT_ADDRESS || '';

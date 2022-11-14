@@ -1,7 +1,7 @@
 import { useQuery } from 'react-query';
 import { ThreeCircles } from 'react-loader-spinner';
-import ApproveButton from './ApproveButton';
-import ListButton from './ListButton';
+import ButtonApprove from './buttons/ButtonApprove';
+import ButtonList from './buttons/ButtonList';
 import { generateName, generateUserName } from '../../utils/generateName';
 import generateSvg from '../../utils/generateSvg';
 import ErrorAlert from '../ErrorAlert';
@@ -116,9 +116,9 @@ const NftList = ({ account }: any) => {
                       </div>
 
                       <div className="ud-flex ud-items-center ud-justify-between ud-border-t-2 ud-border-stroke ud-pt-5">
-                        {!nft.listed && <ApproveButton tokenId={nft.tokenId} />}
+                        {!nft.listed && <ButtonApprove tokenId={nft.tokenId} />}
 
-                        {!nft.listed && <ListButton tokenId={nft.tokenId} />}
+                        {!nft.listed && <ButtonList tokenId={nft.tokenId} />}
                         {nft.listed && (
                           <button className="ud-flex ud-cursor-default ud-w-full ud-items-center ud-justify-center ud-rounded-md ud-bg-dark ud-py-3 ud-px-4 ud-text-sm ud-font-semibold ud-text-white ud-transition-all hover:ud-bg-opacity-90 sm:ud-px-5">
                             LISTED
