@@ -1,14 +1,13 @@
-import { useState } from 'react';
-import SuccessModal from '../SuccessModal';
-import ErrorModal from '../ErrorModal';
-import marketABI from '../../data/marketABI.json';
+import SuccessModal from '../../SuccessModal';
+import ErrorModal from '../../ErrorModal';
+import marketABI from '../../../data/marketABI.json';
 import { chains } from '@web3modal/ethereum';
 import { useContractWrite } from '@web3modal/react';
 import { ethers } from 'ethers';
 
-const PRICE = ethers.utils.parseEther('0.1');
+const PRICE = ethers.utils.parseEther('0.05');
 
-const BuyButton = ({ tokenId, price }: any) => {
+const ButtonBuyLarge = ({ tokenId }: any) => {
   const config = {
     address: process.env.NEXT_PUBLIC_MARKETPLACE_CONTRACT_ADDRESS || '',
     abi: marketABI.abi,
@@ -30,7 +29,7 @@ const BuyButton = ({ tokenId, price }: any) => {
         <button
           disabled={isLoading}
           onClick={async () => write()}
-          className="ud-flex ud-items-center ud-justify-center ud-rounded-md ud-bg-primary ud-py-3 ud-px-4 ud-text-sm ud-font-semibold ud-text-white ud-transition-all hover:ud-bg-opacity-90 sm:ud-px-5"
+          className="ud-w-full ud-items-center ud-justify-center ud-rounded-md ud-bg-primary ud-p-[14px] ud-text-base ud-font-semibold ud-text-white hover:ud-bg-opacity-90"
         >
           Buy
         </button>
@@ -55,4 +54,4 @@ const BuyButton = ({ tokenId, price }: any) => {
   );
 };
 
-export default BuyButton;
+export default ButtonBuyLarge;

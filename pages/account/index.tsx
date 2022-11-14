@@ -2,6 +2,7 @@ import Header from '../../components/Header';
 import Link from 'next/link';
 import { useAccount } from '@web3modal/react';
 import MyAccount from '../../components/account/MyAccount';
+import MySales from '../../components/account/MySales';
 import CreateNFT from '../../components/account/CreateNFT';
 import NftList from '../../components/account/NftList';
 import { useState } from 'react';
@@ -48,6 +49,8 @@ export default function Home() {
       </section>
 
       <MyAccount />
+
+      <MySales account={account} />
 
       <NftList account={account} />
     </>
