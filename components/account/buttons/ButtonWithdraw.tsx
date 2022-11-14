@@ -1,5 +1,3 @@
-//withdrawProceeds
-
 import { useContractWrite, useWaitForTransaction } from '@web3modal/react';
 import marketABI from '../../../data/marketABI.json';
 import { chains } from '@web3modal/ethereum';
