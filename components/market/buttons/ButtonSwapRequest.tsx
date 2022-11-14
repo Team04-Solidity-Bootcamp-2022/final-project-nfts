@@ -3,7 +3,7 @@ import marketABI from '../../../data/marketABI.json';
 import { chains } from '@web3modal/ethereum';
 import SuccessModal from '../../SuccessModal';
 import ErrorModal from '../../ErrorModal';
-//     .makeSwapOffer(myNFTContract.address, tokenId, myNFTContract.address, token3Id);
+
 const ButtonSwapRequest = ({ tokenForSwap, pageToken }: any) => {
   const marketContractAddress =
     process.env.NEXT_PUBLIC_MARKETPLACE_CONTRACT_ADDRESS || '';
@@ -16,13 +16,12 @@ const ButtonSwapRequest = ({ tokenForSwap, pageToken }: any) => {
     chainId: chains.goerli.id,
     args: [
       nftContractAddress,
-      parseInt(tokenForSwap),
-      nftContractAddress,
       parseInt(pageToken),
+      nftContractAddress,
+      parseInt(tokenForSwap),
     ],
   };
 
-  console.log(config);
   const { data, error, isLoading, write } = useContractWrite(config);
   const { isWaiting } = useWaitForTransaction({ hash: data?.hash });
 

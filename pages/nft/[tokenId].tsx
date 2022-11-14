@@ -148,16 +148,18 @@ const NFT = () => {
                     </div>
                   )}
 
+                  {account.address === data.seller && (
+                    <div className="ud-flex ud-my-12 ud-items-center ud-justify-center ud-rounded-md ud-bg-dark ud-py-3 ud-px-4 ud-text-sm ud-font-semibold ud-text-white ud-transition-all hover:ud-bg-opacity-90 sm:ud-px-5">
+                      OWNED
+                    </div>
+                  )}
+
                   {account.address !== data.seller && (
                     <SwapRequest account={account} pageToken={data.tokenId} />
                   )}
 
-                  {account.address === data.seller && <SwapApprove />}
-
                   {account.address === data.seller && (
-                    <div className="ud-flex ud-items-center ud-justify-center ud-rounded-md ud-bg-dark ud-py-3 ud-px-4 ud-text-sm ud-font-semibold ud-text-white ud-transition-all hover:ud-bg-opacity-90 sm:ud-px-5">
-                      OWNED
-                    </div>
+                    <SwapApprove pageToken={data.tokenId} />
                   )}
                 </div>
               </div>
