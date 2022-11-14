@@ -1,10 +1,10 @@
 import { chains } from '@web3modal/ethereum';
 import { useContractWrite, useWaitForTransaction } from '@web3modal/react';
-import nftABI from '../../data/nftABI.json';
-import SuccessModal from '../SuccessModal';
-import ErrorModal from '../ErrorModal';
+import nftABI from '../../../data/nftABI.json';
+import SuccessModal from '../../SuccessModal';
+import ErrorModal from '../../ErrorModal';
 
-export default function ApproveButton({ tokenId }: any) {
+export default function ButtonApprove({ tokenId }: any) {
   const nftContractAddress = process.env.NEXT_PUBLIC_NFT_CONTRACT_ADDRESS || '';
   const marketContractAddress =
     process.env.NEXT_PUBLIC_MARKETPLACE_CONTRACT_ADDRESS || '';
