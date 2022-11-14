@@ -4,6 +4,7 @@ pragma solidity ^0.8.7;
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "hardhat/console.sol";
 
 error PriceNotMet(address nftAddress, uint256 tokenId, uint256 price);
 error ItemNotForSale(address nftAddress, uint256 tokenId);
@@ -250,13 +251,19 @@ contract NftMarketplace is ReentrancyGuard, Ownable {
     );
 
   
-    delete s_swapListings[nftAddress][tokenId1];
-    remove(nftAddress, rndIndex);
-
-    unchecked {
+    if(rndIndex == s_swapPools[nftAddress].length-1) {
+      remove(nftAddress, rndIndex);
       remove(nftAddress, s_swapListings[nftAddress][tokenId].index);
+      delete s_swapListings[nftAddress][tokenId];
+      delete s_swapListings[nftAddress][tokenId1];
+    } else {
+      remove(nftAddress, s_swapListings[nftAddress][tokenId].index);
+      remove(nftAddress, rndIndex);
+      delete s_swapListings[nftAddress][tokenId];
+      delete s_swapListings[nftAddress][tokenId1];
     }
-    delete s_swapListings[nftAddress][tokenId];
+
+    
 
     emit Swapped(
       msg.sender,
@@ -331,6 +338,9 @@ contract NftMarketplace is ReentrancyGuard, Ownable {
   }
 
   function remove(address nftAddress, uint index) public{
+    SwapListing memory listedItem = s_swapListings[nftAddress][s_swapPools[nftAddress].length - 1];
+    listedItem.index = index;
+
     s_swapPools[nftAddress][index] = s_swapPools[nftAddress][s_swapPools[nftAddress].length - 1];
     s_swapPools[nftAddress].pop();
   }
