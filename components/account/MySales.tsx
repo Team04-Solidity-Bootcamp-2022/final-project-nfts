@@ -13,10 +13,10 @@ const onSubmit = (event: any) => {
 };
 
 const MySales = ({ account }: any) => {
-  const { data, status, refetch } = useQuery(
+  const { data, status } = useQuery(
     ['mySales', account.address],
     () => fetchSales(account.address),
-    { refetchOnMount: true }
+    { cacheTime: 0 }
   );
   return (
     <section className="ud-pb-14">
@@ -74,9 +74,7 @@ const MySales = ({ account }: any) => {
                         />
                       )}
                     </div>
-                    {data.proceeds !== '0.0' && (
-                      <ButtonWithdraw proceeds={data.proceeds} />
-                    )}
+                    {data.proceeds !== '0.0' && <ButtonWithdraw />}
                   </div>
                 </div>
               </div>
