@@ -15,7 +15,7 @@ const SwapRequest = ({ account, pageToken }: any) => {
   const { data, status } = useQuery(
     ['userTokens', account.address],
     () => fetchUserTokens(account.address, pageToken),
-    { cacheTime: 0, retry: 1 }
+    { cacheTime: 0 }
   );
 
   const selectChange = (event: any) => {
