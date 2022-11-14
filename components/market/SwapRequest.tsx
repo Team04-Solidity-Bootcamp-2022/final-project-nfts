@@ -2,20 +2,25 @@ import ButtonSwapRequest from './buttons/ButtonSwapRequest';
 import { useQuery } from 'react-query';
 import { ThreeCircles } from 'react-loader-spinner';
 import generateSvg from '../../utils/generateSvg';
+import { useState } from 'react';
 
 const fetchUserTokens = async (address: any, pageToken: string) => {
   const response = await fetch(
-    `/api/account-user-tokens?address=${address}&pageToken=${pageToken}`
+    `/api/account-user-tokens-for-swap?address=${address}&pageToken=${pageToken}`
   );
   return response.json();
 };
-
 const SwapRequest = ({ account, pageToken }: any) => {
+  const [tokenForSwap, setTokenForSwap] = useState('-1');
   const { data, status } = useQuery(
     ['userTokens', account.address],
     () => fetchUserTokens(account.address, pageToken),
     { cacheTime: 0, retry: 1 }
   );
+
+  const selectChange = (event: any) => {
+    setTokenForSwap(event.target.value);
+  };
 
   return (
     <>
@@ -50,11 +55,15 @@ const SwapRequest = ({ account, pageToken }: any) => {
                     <div>
                       <div className="ud-mb-5">
                         <select
+                          onChange={selectChange}
                           name="swapToken"
                           className="ud-w-full ud-rounded-md ud-border ud-border-stroke ud-bg-[#353444] ud-py-3 ud-px-6 ud-text-base ud-font-medium ud-text-body-color ud-outline-none ud-transition-all focus:ud-bg-[#454457] focus:ud-shadow-input"
                         >
+                          <option value={-1}>Select Token</option>
+
                           {data.map((userToken: any) => (
                             <option
+                              value={userToken.tokenId}
                               key={userToken.tokenId}
                               defaultValue={userToken.tokenId}
                             >
@@ -71,9 +80,12 @@ const SwapRequest = ({ account, pageToken }: any) => {
           </div>
           <div className="ud-w-full sm:ud-w-1/2 sm:ud-text-center">
             <div className="ud-space-y-3 ud-p-3">
-              <p className="ud-inline-flex ud-items-center ud-justify-center ud-rounded-md ud-bg-white ud-bg-opacity-10 ud-text-base ud-font-semibold ud-text-white">
-                <ButtonSwapRequest />
-              </p>
+              <div className="ud-inline-flex ud-items-center ud-justify-center ud-rounded-md ud-bg-white ud-bg-opacity-10 ud-text-base ud-font-semibold ud-text-white">
+                <ButtonSwapRequest
+                  tokenForSwap={tokenForSwap}
+                  pageToken={pageToken}
+                />
+              </div>
             </div>
           </div>
         </div>
