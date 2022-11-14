@@ -52,13 +52,15 @@ export default async function handler(
     const isListed =
       listing.seller !== '0x0000000000000000000000000000000000000000';
 
-    userTokens.push({
-      nftAddress: nftContractAddress,
-      seller: address,
-      tokenId: tokenId,
-      price: ethers.utils.formatEther(listing.price),
-      listed: isListed,
-    });
+    if (isListed) {
+      userTokens.push({
+        nftAddress: nftContractAddress,
+        seller: address,
+        tokenId: tokenId,
+        price: ethers.utils.formatEther(listing.price),
+        listed: isListed,
+      });
+    }
   }
 
   if (!userTokens.length) throw new Error('NO LISTED TOKENS');
