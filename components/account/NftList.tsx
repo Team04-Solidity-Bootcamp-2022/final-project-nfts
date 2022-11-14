@@ -126,12 +126,6 @@ const NftList = ({ account }: any) => {
                           </button>
                         )}
                       </div>
-
-                      {nft.listed && (
-                        <div className="ud-flex ud-items-center ud-justify-between ud-border-t-2 ud-border-stroke ud-pt-5">
-                          <ButtonSwapList tokenId={nft.tokenId} />
-                        </div>
-                      )}
                     </div>
                   </div>
                 </div>
